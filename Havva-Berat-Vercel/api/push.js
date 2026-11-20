@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     const payload = JSON.stringify({ title, body: message, icon, url });
     const expiredEndpoints = [];
     let sent = 0;
+    let failed = 0;
 
     await Promise.all(
       subscriptions.map(async (sub) => {
@@ -44,6 +45,7 @@ export default async function handler(req, res) {
           );
           sent++;
         } catch (err) {
+          failed++;
           if (err && (err.statusCode === 404 || err.statusCode === 410)) {
             expiredEndpoints.push(sub.endpoint);
           }
@@ -51,7 +53,7 @@ export default async function handler(req, res) {
       })
     );
 
-    return res.status(200).json({ ok: true, sent, expiredEndpoints });
+    return res.status(200).json({ ok: true, sent, failed, expiredEndpoints });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || 'Bildirim gönderilemedi.' });
   }
