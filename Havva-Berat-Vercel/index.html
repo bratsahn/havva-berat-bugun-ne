@@ -2078,6 +2078,59 @@
       border-color: rgba(226, 184, 116, 0.55);
       color: #f3d4a0;
     }
+
+    /* Admin Logs & Stats */
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .admin-stat-card {
+      background: #1d0e15;
+      border: 1px solid rgba(226, 184, 116, 0.2);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .admin-stat-num {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #f3d4a0;
+      line-height: 1.1;
+    }
+    .admin-stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .log-row {
+      background: #1b0d14;
+      border: 1px solid rgba(235, 188, 200, 0.12);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .log-title { font-weight: 700; font-size: 0.86rem; color: var(--ink); }
+    .log-detail { font-size: 0.78rem; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+    .log-time { font-size: 0.7rem; color: var(--muted); white-space: nowrap; font-weight: 600; }
+    .log-pill {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-right: 5px;
+    }
+    .log-pill.ok { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+    .log-pill.fail { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .log-pill.site { background: rgba(226, 184, 116, 0.16); color: #f3d4a0; }
   </style>
 </head>
 <body>
@@ -2674,6 +2727,7 @@
         <button class="admin-tab" data-atab="activities">🎡 Aktiviteler</button>
         <button class="admin-tab" data-atab="cards">🃏 Tüm Kartlar</button>
         <button class="admin-tab" data-atab="movies">🎬 Film Önerileri</button>
+        <button class="admin-tab" data-atab="logs">📊 Loglar &amp; Bildirimler</button>
         <button class="admin-tab" data-atab="settings">⚙️ PIN &amp; Default Ayarları</button>
       </div>
 
@@ -2777,6 +2831,30 @@
           <div id="admin-movies-list"></div>
         </div>
 
+        <!-- Admin: Logs & Push Stats -->
+        <div class="admin-section" id="admin-sec-logs">
+          <div class="admin-stats-grid" id="admin-push-stats"></div>
+
+          <div class="admin-toolbar" style="flex-direction:column;align-items:stretch;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <strong>📱 Bildirime Bağlı Cihazlar (PIN Onaylı)</strong>
+              <span style="font-size:0.75rem;color:var(--muted);">Tanımadığın cihazı tek tıkla kaldırabilirsin.</span>
+            </div>
+            <div id="admin-devices-list"></div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="chip-group" id="admin-log-filter" style="margin-bottom:0;">
+              <button type="button" class="chip active" data-lfilter="all">✨ Tümü</button>
+              <button type="button" class="chip" data-lfilter="push">🔔 Bildirimler</button>
+              <button type="button" class="chip" data-lfilter="site">📋 Site Logları</button>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm" id="admin-clear-logs-btn">🗑️ Logları Temizle</button>
+          </div>
+
+          <div id="admin-logs-list"></div>
+        </div>
+
         <!-- Admin: Settings & PIN -->
         <div class="admin-section" id="admin-sec-settings">
           <div class="card" style="box-shadow:none; margin-bottom:14px;">
@@ -2840,6 +2918,7 @@
     let stateDocRef = null;
     let memoriesColRef = null;
     let pushSubsColRef = null;
+    let activityLogsColRef = null;
     let cloudReady = false;
     let lastLocalWriteAt = 0;
     let syncDebounceTimer = null;
@@ -2857,6 +2936,7 @@
       stateDocRef = doc(db, 'app_state', 'havva_berat');
       memoriesColRef = collection(db, 'memories');
       pushSubsColRef = collection(db, 'push_subs');
+      activityLogsColRef = collection(db, 'activity_logs');
     } catch (e) {
       console.warn('Firebase başlatılamadı, yerel mod aktif:', e);
       setSyncBadge('🔴', 'Yerel');
@@ -4736,6 +4816,15 @@
     function openAdminPanel() {
       renderAdminAll();
       adminModal.classList.add('open');
+      if (typeof writeActivityLog === 'function') {
+        writeActivityLog({
+          type: 'site',
+          action: 'admin_login',
+          actor: myDeviceOwner || lastSelectedWho || 'Admin',
+          title: '🔐 Admin paneline giriş yapıldı',
+          detail: getDeviceLabel()
+        });
+      }
     }
 
     function closeAdminPanel() {
@@ -4921,6 +5010,7 @@
       renderAdminWheelList('activities', 'admin-activities-list', 'admin-activities-default-info');
       renderAdminCards();
       renderAdminMovies();
+      if (typeof renderAdminLogs === 'function') renderAdminLogs();
     }
 
     // Admin Add Forms
@@ -5247,6 +5337,179 @@
       if (pingLbl) pingLbl.textContent = `2. ${partner}'a Hızlı Bildirim Gönder (${sender} olarak)`;
     }
 
+    function getDeviceLabel() {
+      const ua = navigator.userAgent || '';
+      const os = /iPhone/i.test(ua) ? 'iPhone'
+        : /iPad/i.test(ua) ? 'iPad'
+        : /Android/i.test(ua) ? 'Android'
+        : /Windows/i.test(ua) ? 'Windows'
+        : /Mac/i.test(ua) ? 'Mac'
+        : 'Cihaz';
+      const br = /Edg/i.test(ua) ? 'Edge'
+        : /CriOS|Chrome/i.test(ua) ? 'Chrome'
+        : /Safari/i.test(ua) ? 'Safari'
+        : /Firefox/i.test(ua) ? 'Firefox'
+        : 'Tarayıcı';
+      return `${os} / ${br}`;
+    }
+
+    let activityLogs = [];
+    let adminLogFilter = 'all';
+
+    async function writeActivityLog({ type = 'site', action = 'event', actor = '', target = '', title = '', detail = '', status = 'ok', sentCount = 0, failedCount = 0 }) {
+      if (!db || !activityLogsColRef) return;
+      try {
+        const id = 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        const payload = {
+          id,
+          type: type === 'push' ? 'push' : 'site',
+          action: String(action).slice(0, 80),
+          actor: String(actor || '').slice(0, 40),
+          target: String(target || '').slice(0, 40),
+          title: String(title || '').slice(0, 160),
+          detail: String(detail || '').slice(0, 400),
+          status: String(status || 'ok').slice(0, 30),
+          sentCount: Math.max(0, Math.min(100, Math.floor(Number(sentCount) || 0))),
+          failedCount: Math.max(0, Math.min(100, Math.floor(Number(failedCount) || 0))),
+          createdAt: Date.now()
+        };
+        await setDoc(doc(db, 'activity_logs', id), payload);
+      } catch (e) {
+        console.warn('Log yazılamadı:', e);
+      }
+    }
+
+    function isThisDeviceBound() {
+      return Boolean(myPushSubId && pushSubs.some(s => s.id === myPushSubId));
+    }
+
+    function renderAdminLogs() {
+      const statsEl = document.getElementById('admin-push-stats');
+      const devicesEl = document.getElementById('admin-devices-list');
+      const logsEl = document.getElementById('admin-logs-list');
+      if (!statsEl || !devicesEl || !logsEl) return;
+
+      const pushLogs = activityLogs.filter(l => l.type === 'push');
+      const totalSent = pushLogs.reduce((acc, l) => acc + (Number(l.sentCount) || 0), 0);
+      const totalFailed = pushLogs.reduce((acc, l) => acc + (Number(l.failedCount) || 0) + (l.status === 'failed' && !l.failedCount ? 1 : 0), 0);
+      const havvaToBerat = pushLogs.filter(l => l.actor === 'Havva').length;
+      const beratToHavva = pushLogs.filter(l => l.actor === 'Berat').length;
+
+      statsEl.innerHTML = `
+        <div class="admin-stat-card">
+          <div class="admin-stat-num">${pushLogs.length}</div>
+          <div class="admin-stat-label">Toplam Bildirim</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" style="color:#34d399;">${totalSent}</div>
+          <div class="admin-stat-label">✅ Ulaşan Cihaz</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" style="color:#f87171;">${totalFailed}</div>
+          <div class="admin-stat-label">❌ Ulaşmayan</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" style="color:#fda4af;">${havvaToBerat}</div>
+          <div class="admin-stat-label">💖 Havva → Berat</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" style="color:#93c5fd;">${beratToHavva}</div>
+          <div class="admin-stat-label">💙 Berat → Havva</div>
+        </div>
+      `;
+
+      if (!pushSubs.length) {
+        devicesEl.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);">Henüz bildirime bağlı cihaz yok.</div>';
+      } else {
+        devicesEl.innerHTML = '';
+        pushSubs.forEach(sub => {
+          const r = document.createElement('div');
+          r.className = 'admin-edit-row';
+          r.style.justifyContent = 'space-between';
+          r.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              ${whoBadgeHtml(sub.owner)}
+              <strong style="font-size:0.84rem;">${sub.deviceLabel || 'Bilinmeyen Cihaz'}</strong>
+              <span style="font-size:0.74rem;color:var(--muted);">• ${formatTimestampTR(sub.updatedAt)}</span>
+            </div>
+            <button type="button" class="tiny-btn" title="Bu cihazın bildirim iznini kaldır">🗑️</button>
+          `;
+          r.querySelector('.tiny-btn').addEventListener('click', async () => {
+            if (!db) return;
+            await deleteDoc(doc(db, 'push_subs', sub.id));
+            writeActivityLog({
+              type: 'site',
+              action: 'device_revoked',
+              actor: 'Admin',
+              title: `🔕 Cihaz izni kaldırıldı (${sub.owner})`,
+              detail: sub.deviceLabel || sub.id
+            });
+            showToast('Cihaz kaldırıldı');
+          });
+          devicesEl.appendChild(r);
+        });
+      }
+
+      const filtered = adminLogFilter === 'all'
+        ? activityLogs
+        : activityLogs.filter(l => l.type === adminLogFilter);
+
+      if (!filtered.length) {
+        logsEl.innerHTML = '<div style="font-size:0.84rem;color:var(--muted);padding:14px;text-align:center;">Henüz kayıtlı log yok.</div>';
+        return;
+      }
+
+      logsEl.innerHTML = '';
+      filtered.slice(0, 80).forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'log-row';
+        let pillHtml = '';
+        if (log.type === 'push') {
+          if (log.status === 'ok' && log.sentCount > 0) {
+            pillHtml = `<span class="log-pill ok">✅ Ulaştı (${log.sentCount})</span>`;
+          } else {
+            pillHtml = `<span class="log-pill fail">❌ Ulaşmadı</span>`;
+          }
+        } else {
+          pillHtml = `<span class="log-pill site">📋 Site</span>`;
+        }
+        div.innerHTML = `
+          <div style="min-width:0;flex:1;">
+            <div class="log-title">${pillHtml}<span class="lt-text"></span></div>
+            <div class="log-detail"></div>
+          </div>
+          <div class="log-time">${formatTimestampTR(log.createdAt)}</div>
+        `;
+        div.querySelector('.lt-text').textContent = log.title || log.action;
+        const det = log.type === 'push'
+          ? `${log.actor || '?'} → ${log.target || '?'}${log.detail ? ' • ' + log.detail : ''}`
+          : (log.detail || '');
+        const detEl = div.querySelector('.log-detail');
+        if (det) detEl.textContent = det; else detEl.remove();
+        logsEl.appendChild(div);
+      });
+    }
+
+    document.querySelectorAll('#admin-log-filter .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#admin-log-filter .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        adminLogFilter = chip.dataset.lfilter;
+        renderAdminLogs();
+      });
+    });
+
+    document.getElementById('admin-clear-logs-btn').addEventListener('click', async () => {
+      if (!confirm('Tüm bildirim ve site logları silinsin mi?')) return;
+      if (!db) return;
+      try {
+        await Promise.all(activityLogs.map(l => deleteDoc(doc(db, 'activity_logs', l.id))));
+        showToast('Loglar temizlendi 🗑️');
+      } catch {
+        showToast('Loglar temizlenemedi!');
+      }
+    });
+
     async function subscribeDeviceForPush(owner) {
       if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
         showToast("Bu tarayıcı bildirim desteklemiyor. iPhone'da Safari'den Ana Ekrana ekleyip oradan açın!");
@@ -5269,9 +5532,11 @@
         }
         const subJson = sub.toJSON();
         const subId = myPushSubId || ('sub_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+        const deviceLabel = getDeviceLabel();
         const record = {
           id: subId,
           owner,
+          deviceLabel,
           endpoint: subJson.endpoint,
           keys: {
             p256dh: subJson.keys?.p256dh || '',
@@ -5292,7 +5557,14 @@
         } catch {}
         syncAllWhoPickers(owner);
         updateNotifyUI();
-        showToast(`🔔 ${owner}'nın telefonu bildirimlere bağlandı!`);
+        writeActivityLog({
+          type: 'site',
+          action: 'device_bound',
+          actor: owner,
+          title: `🔔 ${owner} bildirimleri açtı`,
+          detail: deviceLabel
+        });
+        showToast(`🔔 ${owner}'nın telefonu PIN ile bildirimlere bağlandı!`);
       } catch (err) {
         console.warn('Push abonelik hatası:', err);
         showToast('Bildirim açılamadı! iPhone’da Ana Ekrana ekli uygulamadan açtığınızdan emin olun.');
@@ -5312,9 +5584,17 @@
       } catch (e) {
         console.warn('Abonelik iptal hatası:', e);
       }
+      const prevOwner = myDeviceOwner || 'Cihaz';
       myPushSubId = '';
       try { localStorage.removeItem(DEVICE_SUB_ID_KEY); } catch {}
       updateNotifyUI();
+      writeActivityLog({
+        type: 'site',
+        action: 'device_unbound',
+        actor: prevOwner,
+        title: `🔕 ${prevOwner} bu cihazda bildirimleri kapattı`,
+        detail: getDeviceLabel()
+      });
       showToast('🔕 Bu cihazda bildirimler kapatıldı');
     }
 
@@ -5324,6 +5604,17 @@
       const targets = pushSubs.filter(s => s.owner === targetOwner);
 
       if (!targets.length) {
+        writeActivityLog({
+          type: 'push',
+          action: 'push_no_target',
+          actor: who,
+          target: targetOwner,
+          title,
+          detail: `${body} (Bağlı cihaz yok)`,
+          status: 'failed',
+          sentCount: 0,
+          failedCount: 1
+        });
         if (!silent) showToast(`${targetOwner}'nın telefonunda bildirimler henüz açık değil!`);
         return;
       }
@@ -5342,6 +5633,17 @@
         });
         const data = await res.json().catch(() => null);
         if (!res.ok || !data || !data.ok) {
+          writeActivityLog({
+            type: 'push',
+            action: 'push_error',
+            actor: who,
+            target: targetOwner,
+            title,
+            detail: (data && data.error) || 'API hatası',
+            status: 'failed',
+            sentCount: 0,
+            failedCount: targets.length
+          });
           if (!silent) showToast((data && data.error) || 'Bildirim gönderilemedi!');
           return;
         }
@@ -5351,10 +5653,32 @@
             if (stale) deleteDoc(doc(db, 'push_subs', stale.id)).catch(() => {});
           }
         }
+        writeActivityLog({
+          type: 'push',
+          action: 'push_sent',
+          actor: who,
+          target: targetOwner,
+          title,
+          detail: body,
+          status: data.sent > 0 ? 'ok' : 'failed',
+          sentCount: data.sent || 0,
+          failedCount: data.failed || 0
+        });
         if (!silent) {
-          showToast(data.sent > 0 ? `💌 ${targetOwner}'a bildirim gönderildi!` : `${targetOwner}'nın aboneliği yenilenmeli!`);
+          showToast(data.sent > 0 ? `💌 ${targetOwner}'a bildirim ulaştı! (${data.sent} cihaz)` : `${targetOwner}'nın aboneliği yenilenmeli!`);
         }
       } catch (err) {
+        writeActivityLog({
+          type: 'push',
+          action: 'push_network_error',
+          actor: who,
+          target: targetOwner,
+          title,
+          detail: 'Ağ hatası',
+          status: 'failed',
+          sentCount: 0,
+          failedCount: targets.length
+        });
         if (!silent) showToast('Bildirim gönderilirken hata oluştu!');
       }
     }
@@ -5367,16 +5691,38 @@
     document.getElementById('notify-close-btn').addEventListener('click', () => notifyModal.classList.remove('open'));
     notifyModal.addEventListener('click', e => { if (e.target === notifyModal) notifyModal.classList.remove('open'); });
 
-    document.getElementById('bind-havva-btn').addEventListener('click', () => subscribeDeviceForPush('Havva'));
-    document.getElementById('bind-berat-btn').addEventListener('click', () => subscribeDeviceForPush('Berat'));
+    // Tek seferlik PIN korumalı cihaz bağlama
+    function requestBindDevice(owner) {
+      requirePin({
+        title: `${owner} Cihaz İzni`,
+        subtitle: `Bu telefonu ${owner} olarak bildirimlere bağlamak için 4 haneli PIN girin (tek seferlik)`,
+        onSuccess: () => subscribeDeviceForPush(owner)
+      });
+    }
+
+    document.getElementById('bind-havva-btn').addEventListener('click', () => requestBindDevice('Havva'));
+    document.getElementById('bind-berat-btn').addEventListener('click', () => requestBindDevice('Berat'));
     document.getElementById('notify-disable-btn').addEventListener('click', unsubscribeDeviceFromPush);
+
+    // Bağlı olmayan (yabancı) cihazlar dürtme yollayamaz, PIN ister!
+    function runAuthorizedPing(fn) {
+      if (isThisDeviceBound()) {
+        fn();
+      } else {
+        requirePin({
+          title: 'Bildirim Gönderme Onayı',
+          subtitle: 'Bu cihaz henüz kayıtlı değil. Bildirim göndermek için PIN girin (veya yukarıdan telefonunuzu bir kez bağlayın)',
+          onSuccess: fn
+        });
+      }
+    }
 
     document.querySelectorAll('.ping-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const sender = myDeviceOwner || lastSelectedWho || 'Berat';
         const title = btn.dataset.pingTitle;
         const body = btn.dataset.pingBody.replace('{sender}', sender);
-        sendPushToPartner({ sender, title, body, silent: false });
+        runAuthorizedPing(() => sendPushToPartner({ sender, title, body, silent: false }));
       });
     });
 
@@ -5386,12 +5732,14 @@
       const msg = input.value.trim();
       if (!msg) return;
       const sender = myDeviceOwner || lastSelectedWho || 'Berat';
-      input.value = '';
-      sendPushToPartner({
-        sender,
-        title: `💌 ${sender} sana mesaj gönderdi`,
-        body: msg,
-        silent: false
+      runAuthorizedPing(() => {
+        input.value = '';
+        sendPushToPartner({
+          sender,
+          title: `💌 ${sender} sana mesaj gönderdi`,
+          body: msg,
+          silent: false
+        });
       });
     });
 
@@ -5406,8 +5754,26 @@
           });
           pushSubs = list;
           updateNotifyUI();
+          if (adminModal.classList.contains('open')) renderAdminLogs();
         },
         (err) => console.warn('Push abonelikleri okunamadı:', err)
+      );
+    }
+
+    if (activityLogsColRef) {
+      onSnapshot(
+        activityLogsColRef,
+        (qs) => {
+          const list = [];
+          qs.forEach(d => {
+            const data = d.data();
+            if (data) list.push({ ...data, id: data.id || d.id });
+          });
+          list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          activityLogs = list;
+          if (adminModal.classList.contains('open')) renderAdminLogs();
+        },
+        (err) => console.warn('Loglar okunamadı:', err)
       );
     }
     updateNotifyUI();
