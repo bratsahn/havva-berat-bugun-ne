@@ -2008,6 +2008,76 @@
       color: #f3d4a0;
       background: rgba(190, 18, 60, 0.24);
     }
+
+    /* Push Notifications & Quick-Ping Modal */
+    .notify-owner-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .notify-owner-card {
+      background: #1a0d13;
+      border: 1.5px solid rgba(226, 184, 116, 0.2);
+      border-radius: 16px;
+      padding: 12px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.18s ease;
+    }
+    .notify-owner-card img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(226, 184, 116, 0.45);
+    }
+    .notify-owner-card.active {
+      border-color: #e2b874;
+      background: linear-gradient(135deg, rgba(136, 19, 55, 0.55), rgba(34, 15, 24, 0.95));
+      box-shadow: 0 0 18px rgba(190, 18, 60, 0.35);
+    }
+    .ping-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .ping-btn {
+      border: 1px solid rgba(226, 184, 116, 0.24);
+      background: rgba(159, 18, 57, 0.2);
+      color: #fff3f6;
+      border-radius: 13px;
+      padding: 10px 10px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+    .ping-btn:hover { background: rgba(190, 18, 60, 0.4); }
+    .ping-btn:active { transform: scale(0.96); }
+    .notify-status-box {
+      font-size: 0.78rem;
+      color: #f3d4a0;
+      background: rgba(226, 184, 116, 0.1);
+      border: 1px solid rgba(226, 184, 116, 0.22);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .icon-btn.notify-on {
+      border-color: rgba(226, 184, 116, 0.55);
+      color: #f3d4a0;
+    }
   </style>
 </head>
 <body>
@@ -2028,6 +2098,10 @@
           <span id="sync-dot">🟡</span>
           <span id="sync-text">Bağlanıyor</span>
         </span>
+        <button class="icon-btn" id="open-notify-btn" title="Bildirimler &amp; Dürt">
+          <span id="notify-icon">🔔</span>
+          <span id="notify-label">Dürt</span>
+        </button>
         <button class="icon-btn" id="sound-toggle" title="Ses efektlerini aç/kapat">
           <span id="sound-icon">🔊</span>
           <span id="sound-label">Ses Açık</span>
@@ -2528,10 +2602,58 @@
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
       <img class="lightbox-img" id="lightbox-img" alt="Anı fotoğrafı" />
       <div class="lightbox-nav-row">
-        <button class="btn btn-ghost btn-sm" id="lightbox-prev" style="background:rgba(255,255,255,0.92);display:none;">‹ Önceki</button>
+        <button class="btn btn-ghost btn-sm" id="lightbox-prev" style="background:rgba(255,255,255,0.92);color:#1a0d13;display:none;">‹ Önceki</button>
         <span class="lightbox-counter" id="lightbox-counter" style="display:none;">1 / 1</span>
-        <button class="btn btn-ghost btn-sm" id="lightbox-next" style="background:rgba(255,255,255,0.92);display:none;">Sonraki ›</button>
-        <button class="btn btn-ghost btn-sm" id="lightbox-close" style="background:rgba(255,255,255,0.92);">✕ Kapat</button>
+        <button class="btn btn-ghost btn-sm" id="lightbox-next" style="background:rgba(255,255,255,0.92);color:#1a0d13;display:none;">Sonraki ›</button>
+        <button class="btn btn-ghost btn-sm" id="lightbox-close" style="background:rgba(255,255,255,0.92);color:#1a0d13;">✕ Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Push Notifications & Quick-Ping Modal -->
+  <div class="modal-backdrop" id="notify-modal">
+    <div class="modal-card" style="max-width: 410px; text-align: left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <h2 style="font-size:1.3rem;">🔔 Bildirimler &amp; Dürt</h2>
+        <button class="tiny-btn" id="notify-close-btn">✕</button>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;">
+        Bu telefonun kime ait olduğunu seçip bildirimleri açın; biri bir şey eklediğinde veya dürttüğünde <strong>diğerinin telefonuna</strong> anında bildirim gider!
+      </p>
+
+      <div class="notify-status-box" id="notify-status-box">
+        Cihaz durumu kontrol ediliyor...
+      </div>
+
+      <div style="font-size:0.78rem;font-weight:800;color:var(--muted);">1. Bu telefon kimin? (Tıkla &amp; Bildirimleri Aç)</div>
+      <div class="notify-owner-grid">
+        <button type="button" class="notify-owner-card" id="bind-havva-btn" data-bind="Havva">
+          <img src="/havva-avatar.png" alt="Havva" />
+          <span>Havva'nın Telefonu</span>
+        </button>
+        <button type="button" class="notify-owner-card" id="bind-berat-btn" data-bind="Berat">
+          <img src="/berat-avatar.png" alt="Berat" />
+          <span>Berat'ın Telefonu</span>
+        </button>
+      </div>
+
+      <div style="border-top:1px dashed var(--border);margin:14px 0 10px;padding-top:12px;">
+        <div style="font-size:0.78rem;font-weight:800;color:var(--muted);" id="ping-target-label">2. Hızlı Bildirim Gönder</div>
+        <div class="ping-grid">
+          <button type="button" class="ping-btn" data-ping-title="💌 Seni Özledim!" data-ping-body="{sender} seni çok özledi! 💖">💌 Seni Özledim!</button>
+          <button type="button" class="ping-btn" data-ping-title="📍 Nerdesin?" data-ping-body="{sender} merak etti: Nerdesin aşkım? 📍">📍 Nerdesin?</button>
+          <button type="button" class="ping-btn" data-ping-title="🍽️ Acıktım!" data-ping-body="{sender} acıktı, bugün ne yiyoruz? 🍕">🍽️ Acıktım!</button>
+          <button type="button" class="ping-btn" data-ping-title="☕ Kahve mi?" data-ping-body="{sender} soruyor: Kahve içmeye çıkalım mı? ☕">☕ Kahve mi?</button>
+        </div>
+        <form class="add-row" id="custom-ping-form" style="margin-bottom:0;">
+          <input class="input" id="custom-ping-input" type="text" placeholder="Özel bildirim yaz..." maxlength="120" />
+          <button class="btn btn-primary btn-sm" type="submit">🚀 Gönder</button>
+        </form>
+      </div>
+
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <button type="button" class="btn btn-ghost btn-sm" id="notify-disable-btn" style="display:none;">🔕 Bu Cihazda Kapat</button>
+        <span style="font-size:0.72rem;color:var(--muted);">iPhone'da Ana Ekrana ekli uygulamadan açın.</span>
       </div>
     </div>
   </div>
@@ -2717,6 +2839,7 @@
     let db = null;
     let stateDocRef = null;
     let memoriesColRef = null;
+    let pushSubsColRef = null;
     let cloudReady = false;
     let lastLocalWriteAt = 0;
     let syncDebounceTimer = null;
@@ -2733,6 +2856,7 @@
       db = getFirestore(fbApp);
       stateDocRef = doc(db, 'app_state', 'havva_berat');
       memoriesColRef = collection(db, 'memories');
+      pushSubsColRef = collection(db, 'push_subs');
     } catch (e) {
       console.warn('Firebase başlatılamadı, yerel mod aktif:', e);
       setSyncBadge('🔴', 'Yerel');
@@ -3319,6 +3443,12 @@
           this.renderList();
           this.draw();
           showToast(`Çarka eklendi (${addedBy}) ✨`);
+          sendPushToPartner({
+            sender: addedBy,
+            title: this.key === 'foods' ? `🍕 ${addedBy} yemek ekledi` : `🎡 ${addedBy} yeni plan ekledi`,
+            body: val,
+            silent: true
+          });
         });
       }
 
@@ -3707,6 +3837,12 @@
           saveState();
           renderCustomCards();
           showToast(`Özel kart eklendi (${addedBy}) 🃏`);
+          sendPushToPartner({
+            sender: addedBy,
+            title: `🃏 ${addedBy} yeni kart ekledi`,
+            body: text,
+            silent: true
+          });
         }
       });
     });
@@ -3969,6 +4105,12 @@
             saveState();
             renderWatchlist();
             showToast(`💖 Bizim Listemize eklendi (${addedBy})! (Toplam ${state.watchlist.length})`);
+            sendPushToPartner({
+              sender: addedBy,
+              title: `🎬 ${addedBy} Bizim Listemize film ekledi`,
+              body: title,
+              silent: true
+            });
           }
         });
       }
@@ -4476,6 +4618,12 @@
             renderMemories();
             fireConfetti();
             showToast(`Yeni anı kaydedildi (${addedBy}) 💖`);
+            sendPushToPartner({
+              sender: addedBy,
+              title: `📸 ${addedBy} yeni anı paylaştı`,
+              body: note ? `${title} — ${note}` : title,
+              silent: true
+            });
           }
         });
       }
@@ -5047,6 +5195,222 @@
         }
       );
     }
+
+    // ==============================
+    // WEB PUSH NOTIFICATIONS & QUICK-PING
+    // ==============================
+    const VAPID_PUBLIC_KEY = 'BPZVsBM6i_oixFwvVQ_hGX6mDyaWV6UZQxxr3WCX4qXCy-XBIJZtRunB_IbnQ0Z59DU6E0vOPEPAVBN5rhLvYEQ';
+    const DEVICE_OWNER_KEY = 'havva_berat_device_owner';
+    const DEVICE_SUB_ID_KEY = 'havva_berat_push_sub_id';
+    let pushSubs = [];
+    let myDeviceOwner = localStorage.getItem(DEVICE_OWNER_KEY) || '';
+    let myPushSubId = localStorage.getItem(DEVICE_SUB_ID_KEY) || '';
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const out = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) out[i] = rawData.charCodeAt(i);
+      return out;
+    }
+
+    function updateNotifyUI() {
+      const havvaCount = pushSubs.filter(s => s.owner === 'Havva').length;
+      const beratCount = pushSubs.filter(s => s.owner === 'Berat').length;
+      const myActive = myPushSubId && pushSubs.some(s => s.id === myPushSubId);
+
+      const openBtn = document.getElementById('open-notify-btn');
+      const notifyLabel = document.getElementById('notify-label');
+      if (openBtn) openBtn.classList.toggle('notify-on', Boolean(myActive));
+      if (notifyLabel) notifyLabel.textContent = myActive ? 'Dürt 💌' : 'Bildirim';
+
+      const bHavva = document.getElementById('bind-havva-btn');
+      const bBerat = document.getElementById('bind-berat-btn');
+      if (bHavva) bHavva.classList.toggle('active', myDeviceOwner === 'Havva' && myActive);
+      if (bBerat) bBerat.classList.toggle('active', myDeviceOwner === 'Berat' && myActive);
+
+      const disableBtn = document.getElementById('notify-disable-btn');
+      if (disableBtn) disableBtn.style.display = myActive ? 'inline-flex' : 'none';
+
+      const statusBox = document.getElementById('notify-status-box');
+      if (statusBox) {
+        const myTxt = myActive
+          ? `✅ Bu cihaz: <strong>${myDeviceOwner}</strong> (Bildirimler Açık)`
+          : '🔕 Bu cihazda bildirimler henüz kapalı. Aşağıdan kimin telefonu olduğunu seçin.';
+        statusBox.innerHTML = `${myTxt}<br/>📱 Bağlı cihazlar → <strong>Havva: ${havvaCount}</strong> • <strong>Berat: ${beratCount}</strong>`;
+      }
+
+      const sender = myDeviceOwner || lastSelectedWho || 'Berat';
+      const partner = sender === 'Havva' ? 'Berat' : 'Havva';
+      const pingLbl = document.getElementById('ping-target-label');
+      if (pingLbl) pingLbl.textContent = `2. ${partner}'a Hızlı Bildirim Gönder (${sender} olarak)`;
+    }
+
+    async function subscribeDeviceForPush(owner) {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+        showToast("Bu tarayıcı bildirim desteklemiyor. iPhone'da Safari'den Ana Ekrana ekleyip oradan açın!");
+        return;
+      }
+      try {
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') {
+          showToast('Bildirim izni verilmedi. Telefon ayarlarından izin verebilirsiniz.');
+          return;
+        }
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+        let sub = await reg.pushManager.getSubscription();
+        if (!sub) {
+          sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+          });
+        }
+        const subJson = sub.toJSON();
+        const subId = myPushSubId || ('sub_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+        const record = {
+          id: subId,
+          owner,
+          endpoint: subJson.endpoint,
+          keys: {
+            p256dh: subJson.keys?.p256dh || '',
+            auth: subJson.keys?.auth || ''
+          },
+          updatedAt: Date.now()
+        };
+        if (db) {
+          await setDoc(doc(db, 'push_subs', subId), record);
+        }
+        myDeviceOwner = owner;
+        myPushSubId = subId;
+        lastSelectedWho = owner;
+        try {
+          localStorage.setItem(DEVICE_OWNER_KEY, owner);
+          localStorage.setItem(DEVICE_SUB_ID_KEY, subId);
+          localStorage.setItem(WHO_STORAGE_KEY, owner);
+        } catch {}
+        syncAllWhoPickers(owner);
+        updateNotifyUI();
+        showToast(`🔔 ${owner}'nın telefonu bildirimlere bağlandı!`);
+      } catch (err) {
+        console.warn('Push abonelik hatası:', err);
+        showToast('Bildirim açılamadı! iPhone’da Ana Ekrana ekli uygulamadan açtığınızdan emin olun.');
+      }
+    }
+
+    async function unsubscribeDeviceFromPush() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const reg = await navigator.serviceWorker.getRegistration('/sw.js');
+          const sub = reg ? await reg.pushManager.getSubscription() : null;
+          if (sub) await sub.unsubscribe();
+        }
+        if (db && myPushSubId) {
+          await deleteDoc(doc(db, 'push_subs', myPushSubId));
+        }
+      } catch (e) {
+        console.warn('Abonelik iptal hatası:', e);
+      }
+      myPushSubId = '';
+      try { localStorage.removeItem(DEVICE_SUB_ID_KEY); } catch {}
+      updateNotifyUI();
+      showToast('🔕 Bu cihazda bildirimler kapatıldı');
+    }
+
+    async function sendPushToPartner({ sender, title, body, silent = false }) {
+      const who = sender === 'Havva' ? 'Havva' : 'Berat';
+      const targetOwner = who === 'Havva' ? 'Berat' : 'Havva';
+      const targets = pushSubs.filter(s => s.owner === targetOwner);
+
+      if (!targets.length) {
+        if (!silent) showToast(`${targetOwner}'nın telefonunda bildirimler henüz açık değil!`);
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subscriptions: targets,
+            title,
+            body,
+            icon: who === 'Havva' ? '/havva-avatar.png' : '/berat-avatar.png',
+            url: '/'
+          })
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok || !data || !data.ok) {
+          if (!silent) showToast((data && data.error) || 'Bildirim gönderilemedi!');
+          return;
+        }
+        if (Array.isArray(data.expiredEndpoints) && data.expiredEndpoints.length && db) {
+          for (const ep of data.expiredEndpoints) {
+            const stale = pushSubs.find(s => s.endpoint === ep);
+            if (stale) deleteDoc(doc(db, 'push_subs', stale.id)).catch(() => {});
+          }
+        }
+        if (!silent) {
+          showToast(data.sent > 0 ? `💌 ${targetOwner}'a bildirim gönderildi!` : `${targetOwner}'nın aboneliği yenilenmeli!`);
+        }
+      } catch (err) {
+        if (!silent) showToast('Bildirim gönderilirken hata oluştu!');
+      }
+    }
+
+    const notifyModal = document.getElementById('notify-modal');
+    document.getElementById('open-notify-btn').addEventListener('click', () => {
+      updateNotifyUI();
+      notifyModal.classList.add('open');
+    });
+    document.getElementById('notify-close-btn').addEventListener('click', () => notifyModal.classList.remove('open'));
+    notifyModal.addEventListener('click', e => { if (e.target === notifyModal) notifyModal.classList.remove('open'); });
+
+    document.getElementById('bind-havva-btn').addEventListener('click', () => subscribeDeviceForPush('Havva'));
+    document.getElementById('bind-berat-btn').addEventListener('click', () => subscribeDeviceForPush('Berat'));
+    document.getElementById('notify-disable-btn').addEventListener('click', unsubscribeDeviceFromPush);
+
+    document.querySelectorAll('.ping-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sender = myDeviceOwner || lastSelectedWho || 'Berat';
+        const title = btn.dataset.pingTitle;
+        const body = btn.dataset.pingBody.replace('{sender}', sender);
+        sendPushToPartner({ sender, title, body, silent: false });
+      });
+    });
+
+    document.getElementById('custom-ping-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const input = document.getElementById('custom-ping-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const sender = myDeviceOwner || lastSelectedWho || 'Berat';
+      input.value = '';
+      sendPushToPartner({
+        sender,
+        title: `💌 ${sender} sana mesaj gönderdi`,
+        body: msg,
+        silent: false
+      });
+    });
+
+    if (pushSubsColRef) {
+      onSnapshot(
+        pushSubsColRef,
+        (qs) => {
+          const list = [];
+          qs.forEach(d => {
+            const data = d.data();
+            if (data) list.push({ ...data, id: data.id || d.id });
+          });
+          pushSubs = list;
+          updateNotifyUI();
+        },
+        (err) => console.warn('Push abonelikleri okunamadı:', err)
+      );
+    }
+    updateNotifyUI();
   </script>
 </body>
 </html>
