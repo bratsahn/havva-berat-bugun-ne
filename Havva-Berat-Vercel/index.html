@@ -1,0 +1,4524 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Havva &amp; Berat — Bugün Ne?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #fff7f4;
+      --bg-accent: #ffe9e4;
+      --card: rgba(255, 255, 255, 0.88);
+      --card-solid: #ffffff;
+      --ink: #25192e;
+      --muted: #6c5d78;
+      --border: rgba(37, 25, 46, 0.09);
+      --rose: #ff5678;
+      --rose-dark: #e03a5d;
+      --violet: #7c5cff;
+      --amber: #f59e0b;
+      --mint: #10b981;
+      --sky: #3b82f6;
+      --danger: #ef4444;
+      --shadow-sm: 0 6px 20px rgba(66, 32, 66, 0.06);
+      --shadow-md: 0 16px 40px rgba(66, 32, 66, 0.1);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 86, 120, 0.16), transparent 36%),
+        radial-gradient(circle at 88% 12%, rgba(124, 92, 255, 0.14), transparent 38%),
+        radial-gradient(circle at 50% 92%, rgba(245, 158, 11, 0.13), transparent 40%),
+        var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 92px;
+    }
+
+    h1, h2, h3, .brand-title {
+      font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 247, 244, 0.82);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--rose), var(--violet));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      box-shadow: 0 8px 20px rgba(255, 86, 120, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--card-solid);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .icon-btn:hover { transform: translateY(-1px); }
+    .icon-btn:active { transform: scale(0.97); }
+    .icon-btn.admin-active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    /* Desktop Tabs */
+    .nav-wrap {
+      max-width: 1060px;
+      margin: 18px auto 0;
+      padding: 0 18px;
+    }
+
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--border);
+      padding: 7px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-pill {
+      flex: 1 1 auto;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 11px 14px;
+      border-radius: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-pill:hover {
+      color: var(--ink);
+      background: rgba(255, 86, 120, 0.08);
+    }
+
+    .nav-pill.active {
+      background: linear-gradient(135deg, var(--rose), #ff7a6b);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(255, 86, 120, 0.3);
+    }
+
+    main {
+      max-width: 1060px;
+      margin: 22px auto 0;
+      padding: 0 18px;
+    }
+
+    .panel {
+      display: none;
+      animation: fadeUp 0.28s ease;
+    }
+
+    .panel.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .wheel-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 { font-size: 1.45rem; line-height: 1.15; }
+    .section-head p { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
+
+    .badge-soft {
+      background: rgba(124, 92, 255, 0.12);
+      color: var(--violet);
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 6px 11px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* Wheel */
+    .wheel-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 6px;
+    }
+
+    .wheel-pointer {
+      position: relative;
+      z-index: 5;
+      margin-bottom: -18px;
+      filter: drop-shadow(0 6px 8px rgba(37, 25, 46, 0.25));
+      transition: transform 0.08s ease;
+    }
+
+    .wheel-pointer.tick { transform: rotate(-16deg); }
+
+    .wheel-canvas-wrap {
+      position: relative;
+      width: min(390px, 84vw);
+      height: min(390px, 84vw);
+      border-radius: 50%;
+      padding: 10px;
+      background: linear-gradient(145deg, #ffffff, #ffe3e9);
+      box-shadow:
+        0 18px 42px rgba(66, 32, 66, 0.16),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+    }
+
+    .wheel-canvas-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .wheel-center-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: linear-gradient(135deg, var(--rose), var(--violet));
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(37, 25, 46, 0.28);
+      transition: transform 0.15s ease;
+      z-index: 4;
+    }
+
+    .wheel-center-btn:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.06); }
+    .wheel-center-btn:active:not(:disabled) { transform: translate(-50%, -50%) scale(0.95); }
+    .wheel-center-btn:disabled { opacity: 0.72; cursor: not-allowed; }
+
+    .spin-cta-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--rose), #ff7a6b);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(255, 86, 120, 0.32);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(255, 86, 120, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(124, 92, 255, 0.12);
+      color: var(--violet);
+    }
+    .btn-secondary:hover { background: rgba(124, 92, 255, 0.2); }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #047857;
+    }
+    .btn-success:hover { background: rgba(16, 185, 129, 0.24); }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.22); }
+
+    .btn-ghost {
+      background: rgba(37, 25, 46, 0.06);
+      color: var(--ink);
+    }
+    .btn-ghost:hover { background: rgba(37, 25, 46, 0.11); }
+
+    .btn-sm {
+      padding: 8px 13px;
+      font-size: 0.8rem;
+      border-radius: 10px;
+    }
+
+    /* Inputs & Lists */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 13px;
+      padding: 11px 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 4px rgba(255, 86, 120, 0.12);
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .item-list::-webkit-scrollbar { width: 6px; }
+    .item-list::-webkit-scrollbar-thumb { background: rgba(37, 25, 46, 0.16); border-radius: 999px; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 9px 12px;
+      transition: opacity 0.18s ease;
+    }
+
+    .item-row.inactive { opacity: 0.48; background: rgba(255, 255, 255, 0.55); }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .item-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .item-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-row.inactive .item-text { text-decoration: line-through; }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .tiny-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      border: none;
+      background: rgba(37, 25, 46, 0.06);
+      color: var(--ink);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .tiny-btn:hover {
+      background: rgba(255, 86, 120, 0.14);
+      color: var(--rose-dark);
+    }
+
+    .list-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Coin / Decider */
+    .decider-grid, .movie-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .coin-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 18px 10px;
+    }
+
+    .coin-scene {
+      width: 170px;
+      height: 170px;
+      perspective: 900px;
+      margin: 14px 0 22px;
+    }
+
+    .coin {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1.6s cubic-bezier(0.2, 0.85, 0.25, 1);
+    }
+
+    .coin-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 6px solid #fff;
+      box-shadow: 0 18px 36px rgba(37, 25, 46, 0.2);
+      color: #fff;
+    }
+
+    .coin-front { background: linear-gradient(135deg, #ff5678, #ff85a2); }
+    .coin-back { background: linear-gradient(135deg, #4f46e5, #3b82f6); transform: rotateY(180deg); }
+    .coin-emoji { font-size: 2.8rem; margin-bottom: 4px; }
+    .coin-name { font-family: 'Fredoka', sans-serif; font-size: 1.45rem; font-weight: 700; }
+
+    .decider-result {
+      min-height: 62px;
+      background: rgba(255, 86, 120, 0.08);
+      border: 1px dashed rgba(255, 86, 120, 0.35);
+      border-radius: 16px;
+      padding: 12px 16px;
+      width: 100%;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip.active, .chip:hover {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .score-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .score-num { font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: 700; }
+    .score-box.havva .score-num { color: var(--rose); }
+    .score-box.berat .score-num { color: var(--sky); }
+
+    /* Deck / Cards */
+    .deck-wrap {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .play-card-scene {
+      perspective: 1100px;
+      width: 100%;
+      max-width: 420px;
+      height: 280px;
+      margin: 12px auto 18px;
+      cursor: pointer;
+    }
+
+    .play-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .play-card.flipped { transform: rotateY(180deg); }
+
+    .play-card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 26px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 20px 44px rgba(66, 32, 66, 0.16);
+    }
+
+    .play-card-back {
+      background: linear-gradient(135deg, #ff5678, #7c5cff);
+      color: #fff;
+      border: 4px solid rgba(255, 255, 255, 0.55);
+    }
+
+    .play-card-front {
+      background: #fff;
+      color: var(--ink);
+      border: 2px solid rgba(255, 86, 120, 0.22);
+      transform: rotateY(180deg);
+    }
+
+    .card-tag {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .card-tag.gorev { background: rgba(245, 158, 11, 0.16); color: #b45309; }
+    .card-tag.soru { background: rgba(255, 86, 120, 0.14); color: var(--rose-dark); }
+    .play-card-text { font-family: 'Fredoka', sans-serif; font-size: 1.38rem; line-height: 1.35; }
+
+    /* Movies */
+    .movie-spotlight {
+      background: linear-gradient(135deg, #25192e, #3f2654);
+      color: #fff;
+      border-radius: 20px;
+      padding: 22px;
+      margin: 14px 0;
+      min-height: 155px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .movie-spotlight::after {
+      content: "🎬";
+      position: absolute;
+      right: 16px;
+      bottom: 8px;
+      font-size: 3.4rem;
+      opacity: 0.15;
+    }
+
+    .movie-spotlight h3 { font-size: 1.4rem; margin-bottom: 6px; }
+    .movie-spotlight p { color: rgba(255, 255, 255, 0.82); font-size: 0.9rem; line-height: 1.45; }
+    .movie-meta {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.16);
+      padding: 5px 10px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    /* Memories: Timeline (Desktop) + Instagram/Facebook Feed (Mobile) */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .mobile-composer-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+
+    .mobile-composer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .mobile-composer-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--violet));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .memory-list {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 4px 2px 10px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 82px 22px 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .timeline-date-col {
+      text-align: right;
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .timeline-day {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--rose-dark);
+      line-height: 1.1;
+    }
+
+    .timeline-year {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .timeline-rail {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .timeline-rail::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: -20px;
+      width: 3px;
+      background: linear-gradient(180deg, var(--rose), var(--violet));
+      opacity: 0.35;
+      border-radius: 999px;
+    }
+
+    .timeline-row:last-child .timeline-rail::before {
+      bottom: 50%;
+    }
+
+    .timeline-dot {
+      position: relative;
+      z-index: 2;
+      margin-top: 15px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--violet));
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 3px rgba(255, 86, 120, 0.22);
+      flex-shrink: 0;
+    }
+
+    .memory-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .memory-post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .memory-post-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .memory-emoji {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffe4ec, #ede9fe);
+      border: 2px solid rgba(255, 86, 120, 0.25);
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .memory-author-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+      line-height: 1.2;
+    }
+
+    .memory-author-date {
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    .memory-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Instagram-style Swipeable Photo Carousel */
+    .ig-carousel-wrap {
+      position: relative;
+      background: #140e1a;
+      width: 100%;
+    }
+
+    .ig-carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .ig-carousel-track::-webkit-scrollbar { display: none; }
+
+    .ig-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #140e1a;
+    }
+
+    .ig-slide img {
+      width: 100%;
+      max-height: 430px;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .ig-count-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(20, 14, 26, 0.72);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .ig-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 0 2px;
+    }
+
+    .ig-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(37, 25, 46, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .ig-dot.active {
+      background: var(--rose);
+      width: 16px;
+      border-radius: 999px;
+    }
+
+    .memory-post-body {
+      padding: 12px 15px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .memory-title { font-weight: 800; font-size: 0.98rem; line-height: 1.3; }
+    .memory-note { font-size: 0.88rem; color: var(--ink); opacity: 0.86; line-height: 1.48; white-space: pre-wrap; }
+
+    .memory-timestamps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      font-size: 0.71rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .photo-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border: 1.5px dashed rgba(255, 86, 120, 0.4);
+      background: rgba(255, 86, 120, 0.05);
+      color: var(--rose-dark);
+      border-radius: 13px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .photo-upload-label:hover {
+      background: rgba(255, 86, 120, 0.11);
+    }
+
+    .photo-preview-grid {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .photo-preview-grid.show { display: grid; }
+
+    .photo-preview-tile {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 1 / 1;
+    }
+
+    .photo-preview-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-preview-remove {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      background: rgba(37, 25, 46, 0.8);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .lightbox-nav-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lightbox-counter {
+      color: #fff;
+      font-size: 0.84rem;
+      font-weight: 700;
+      background: rgba(37, 25, 46, 0.65);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .lightbox-img {
+      max-width: min(92vw, 760px);
+      max-height: 82vh;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      object-fit: contain;
+    }
+
+    @media (max-width: 520px) {
+      .timeline-row {
+        grid-template-columns: 64px 18px 1fr;
+        gap: 6px;
+      }
+      .timeline-day { font-size: 0.88rem; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 18px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1.5px dashed var(--border);
+      border-radius: 18px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(37, 25, 46, 0.56);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open { display: flex; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 28px 24px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 28px 60px rgba(37, 25, 46, 0.28);
+      animation: popIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.86); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-badge { font-size: 3rem; margin-bottom: 8px; }
+    .modal-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--rose); }
+    .modal-winner { font-family: 'Fredoka', sans-serif; font-size: 1.75rem; margin: 10px 0 8px; line-height: 1.25; }
+    .modal-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+
+    /* PIN Modal */
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 18px 0 20px;
+    }
+
+    .pin-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(37, 25, 46, 0.25);
+      transition: all 0.15s ease;
+    }
+
+    .pin-dot.filled {
+      background: var(--rose);
+      border-color: var(--rose);
+      transform: scale(1.15);
+    }
+
+    .pin-dots.shake {
+      animation: shake 0.36s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    .pin-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 260px;
+      margin: 0 auto 16px;
+    }
+
+    .pin-key {
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff7f4;
+      color: var(--ink);
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .pin-key:hover { background: #ffe5ec; }
+    .pin-key:active { transform: scale(0.94); }
+
+    /* Admin Panel Overlay */
+    .admin-modal-card {
+      background: #fff9f7;
+      border-radius: 26px;
+      max-width: 920px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(20, 10, 30, 0.38);
+      animation: popIn 0.24s ease;
+    }
+
+    .admin-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .admin-header h2 { font-size: 1.25rem; }
+    .admin-header p { font-size: 0.78rem; opacity: 0.78; margin-top: 2px; }
+
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px 18px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .admin-tab {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .admin-tab.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .admin-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+
+    .admin-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .admin-edit-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .admin-edit-row input[type="text"],
+    .admin-edit-row input[type="number"],
+    .admin-edit-row select {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 7px 10px;
+      font-family: inherit;
+      font-size: 0.86rem;
+      color: var(--ink);
+      background: #fffdfc;
+      outline: none;
+    }
+
+    .admin-edit-row input:focus, .admin-edit-row select:focus {
+      border-color: var(--rose);
+    }
+
+    .admin-movie-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-movie-top {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr 0.5fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14);
+      color: #047857;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink);
+      color: #fff;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 200;
+      box-shadow: 0 12px 28px rgba(37, 25, 46, 0.28);
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+      grid-template-columns: repeat(6, 1fr);
+      gap: 2px;
+    }
+
+    .mobile-nav button {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 6px 2px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .mobile-nav button span.ico { font-size: 1.2rem; line-height: 1; }
+    .mobile-nav button.active { color: var(--rose); background: rgba(255, 86, 120, 0.1); }
+
+    .form-stack { display: flex; flex-direction: column; gap: 10px; }
+    .emoji-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+    .emoji-opt {
+      width: 38px; height: 38px; border-radius: 11px;
+      border: 1.5px solid var(--border); background: #fff;
+      font-size: 1.15rem; cursor: pointer; display: grid; place-items: center;
+    }
+    .emoji-opt.active { border-color: var(--rose); background: rgba(255, 86, 120, 0.12); }
+
+    /* Who Added Picker & Badges */
+    .who-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .who-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .who-picker {
+      display: inline-flex;
+      background: rgba(37, 25, 46, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .who-opt {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .who-opt.active.berat {
+      background: linear-gradient(135deg, #3b82f6, #4f46e5);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+    }
+    .who-opt.active.havva {
+      background: linear-gradient(135deg, #ff5678, #ec4899);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(255, 86, 120, 0.3);
+    }
+    .who-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .who-badge.berat {
+      background: rgba(59, 130, 246, 0.12);
+      color: #2563eb;
+    }
+    .who-badge.havva {
+      background: rgba(255, 86, 120, 0.13);
+      color: var(--rose-dark);
+    }
+
+    @media (max-width: 860px) {
+      .wheel-layout, .decider-grid, .deck-wrap, .movie-grid, .memory-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-wrap { display: none; }
+      .mobile-nav { display: grid; }
+      main { padding: 0 12px; margin-top: 14px; }
+      .topbar-inner { padding: 10px 14px; }
+      .brand-badge { width: 38px; height: 38px; font-size: 19px; border-radius: 12px; }
+      .brand-title { font-size: 1.05rem; }
+      .brand-sub { font-size: 0.72rem; }
+      .card { padding: 16px; border-radius: 20px; }
+      .admin-movie-top { grid-template-columns: 1fr 1fr; }
+      #sound-label { display: none; }
+
+      /* Mobile Instagram/Facebook Feed for Memories */
+      .mobile-composer-bar { display: flex; }
+      #memory-form-card { display: none; margin-bottom: 14px; }
+      #memory-form-card.mobile-open { display: block; animation: fadeUp 0.22s ease; }
+      .memory-feed-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        backdrop-filter: none;
+      }
+      .memory-feed-card .section-head {
+        padding: 0 4px;
+        margin-bottom: 12px;
+      }
+      .timeline-row {
+        display: block;
+      }
+      .timeline-date-col, .timeline-rail {
+        display: none;
+      }
+      .memory-list {
+        gap: 16px;
+        padding: 0;
+      }
+      .ig-slide img {
+        max-height: 72vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">💖</div>
+        <div>
+          <div class="brand-title">Havva &amp; Berat — Bugün Ne?</div>
+          <div class="brand-sub">Yemek • Plan • Film • Kartlar • Karabük</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="icon-btn" id="sync-status" style="cursor:default;pointer-events:none;" title="Firebase Canlı Senkronizasyon">
+          <span id="sync-dot">🟡</span>
+          <span id="sync-text">Bağlanıyor</span>
+        </span>
+        <button class="icon-btn" id="sound-toggle" title="Ses efektlerini aç/kapat">
+          <span id="sound-icon">🔊</span>
+          <span id="sound-label">Ses Açık</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Desktop Navigation -->
+  <nav class="nav-wrap" aria-label="Ana Menü">
+    <div class="nav-pills">
+      <button class="nav-pill active" data-tab="food">🍕 Ne Yiyeceğiz?</button>
+      <button class="nav-pill" data-tab="activity">🎡 Bugün Ne Yapalım?</button>
+      <button class="nav-pill" data-tab="decider">🪙 Havva mı Berat mı?</button>
+      <button class="nav-pill" data-tab="cards">🃏 Kart Çek</button>
+      <button class="nav-pill" data-tab="movies">🎬 Ne İzleyelim?</button>
+      <button class="nav-pill" data-tab="memories">📝 Anılarımız</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <!-- 1. FOOD WHEEL -->
+    <section class="panel active" id="panel-food">
+      <div class="wheel-layout">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>🍕 Ne Yiyeceğiz Çarkı</h2>
+              <p>Kararsızlık bitti! Çevir, kaderin seçtiğini yiyoruz.</p>
+            </div>
+            <span class="badge-soft" id="food-count-badge">0 seçenek</span>
+          </div>
+
+          <div class="wheel-stage">
+            <svg class="wheel-pointer" id="food-pointer" width="38" height="42" viewBox="0 0 38 42">
+              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#ff5678" stroke="#ffffff" stroke-width="3" />
+            </svg>
+            <div class="wheel-canvas-wrap">
+              <canvas id="food-canvas" width="500" height="500"></canvas>
+              <button class="wheel-center-btn" id="food-spin-center">ÇEVİR!</button>
+            </div>
+            <div class="spin-cta-row">
+              <button class="btn btn-primary" id="food-spin-btn">🎯 Çarkı Çevir</button>
+              <button class="btn btn-ghost" id="food-shuffle-btn">🔀 Karıştır</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h3>Yemek Listesi</h3>
+              <p>İstediğinizi ekleyin, üstüne tıklayıp geçici kapatın.</p>
+            </div>
+          </div>
+
+          <div class="who-row">
+            <span class="who-label">Kim ekliyor?</span>
+            <div class="who-picker" data-who-picker="food">
+              <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
+              <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+            </div>
+          </div>
+
+          <form class="add-row" id="food-add-form">
+            <input class="input" id="food-input" type="text" placeholder="Yeni yemek ekle (örn. İskender)..." maxlength="40" />
+            <button class="btn btn-primary" type="submit">Ekle</button>
+          </form>
+
+          <div class="item-list" id="food-list"></div>
+
+          <div class="list-footer">
+            <span>İpucu: Tıklayınca çarktan gizlenir.</span>
+            <button class="btn btn-ghost btn-sm" id="food-reset-btn">↺ Varsayılanlara Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ACTIVITY WHEEL -->
+    <section class="panel" id="panel-activity">
+      <div class="wheel-layout">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>🎡 Bugün Ne Yapalım?</h2>
+              <p>Karabük &amp; Safranbolu özel can sıkıntısı giderici çark!</p>
+            </div>
+            <span class="badge-soft" id="activity-count-badge">0 seçenek</span>
+          </div>
+
+          <div class="wheel-stage">
+            <svg class="wheel-pointer" id="activity-pointer" width="38" height="42" viewBox="0 0 38 42">
+              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#7c5cff" stroke="#ffffff" stroke-width="3" />
+            </svg>
+            <div class="wheel-canvas-wrap">
+              <canvas id="activity-canvas" width="500" height="500"></canvas>
+              <button class="wheel-center-btn" id="activity-spin-center">ÇEVİR!</button>
+            </div>
+            <div class="spin-cta-row">
+              <button class="btn btn-primary" id="activity-spin-btn">✨ Planı Seç</button>
+              <button class="btn btn-ghost" id="activity-shuffle-btn">🔀 Karıştır</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h3>Aktivite Listesi</h3>
+              <p>Fix planlar hazır, aklınıza geleni hemen ekleyin.</p>
+            </div>
+          </div>
+
+          <div class="who-row">
+            <span class="who-label">Kim ekliyor?</span>
+            <div class="who-picker" data-who-picker="activity">
+              <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
+              <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+            </div>
+          </div>
+
+          <form class="add-row" id="activity-add-form">
+            <input class="input" id="activity-input" type="text" placeholder="Yeni aktivite ekle..." maxlength="60" />
+            <button class="btn btn-primary" type="submit">Ekle</button>
+          </form>
+
+          <div class="item-list" id="activity-list"></div>
+
+          <div class="list-footer">
+            <span>İpucu: Tıklayınca çarktan gizlenir.</span>
+            <button class="btn btn-ghost btn-sm" id="activity-reset-btn">↺ Varsayılanlara Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HAVVA MI BERAT MI -->
+    <section class="panel" id="panel-decider">
+      <div class="decider-grid">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>🪙 Havva mı, Berat mı?</h2>
+              <p>Tatlı tartışmalara 2 saniyede adil çözüm.</p>
+            </div>
+          </div>
+
+          <div class="coin-stage">
+            <div class="coin-scene">
+              <div class="coin" id="coin">
+                <div class="coin-face coin-front">
+                  <div class="coin-emoji">💖</div>
+                  <div class="coin-name">Havva</div>
+                </div>
+                <div class="coin-face coin-back">
+                  <div class="coin-emoji">💙</div>
+                  <div class="coin-name">Berat</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="decider-result" id="decider-result">
+              Bir konu seç veya direkt parayı fırlat!
+            </div>
+
+            <button class="btn btn-primary" id="flip-coin-btn" style="width: 100%; max-width: 280px;">
+              🪙 Parayı Fırlat!
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h3>Ne İçin Atıyoruz?</h3>
+              <p>Hazır konulardan seç ya da kendin yaz.</p>
+            </div>
+          </div>
+
+          <div class="chip-group" id="decider-topics">
+            <button class="chip active" data-topic="Filmi kim seçsin?">🎬 Filmi kim seçsin?</button>
+            <button class="chip" data-topic="Kahveleri kim ısmarlasın?">☕ Kahveleri kim ısmarlasın?</button>
+            <button class="chip" data-topic="Kim kalkıp suyu getirsin?">💧 Suyu kim getirsin?</button>
+            <button class="chip" data-topic="Şarkıyı kim açsın?">🎵 Şarkıyı kim açsın?</button>
+            <button class="chip" data-topic="Fotoğrafı kim çeksin?">📸 Fotoğrafı kim çeksin?</button>
+          </div>
+
+          <input class="input" id="custom-topic-input" type="text" placeholder="Veya kendi konunu yaz..." />
+
+          <div class="scoreboard">
+            <div class="score-box havva">
+              <div style="font-weight: 700; font-size: 0.88rem;">💖 Havva</div>
+              <div class="score-num" id="score-havva">0</div>
+            </div>
+            <div class="score-box berat">
+              <div style="font-weight: 700; font-size: 0.88rem;">💙 Berat</div>
+              <div class="score-num" id="score-berat">0</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; text-align: right;">
+            <button class="btn btn-ghost btn-sm" id="reset-score-btn">Skoru Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. COUPLE CARDS -->
+    <section class="panel" id="panel-cards">
+      <div class="deck-wrap">
+        <div class="card" style="text-align: center;">
+          <div class="section-head" style="text-align: left;">
+            <div>
+              <h2>🃏 Kart Çek</h2>
+              <p>Kafede otururken sohbet &amp; mini görev kartları.</p>
+            </div>
+            <span class="badge-soft" id="card-count-badge">0 kart</span>
+          </div>
+
+          <div class="chip-group" id="card-filter-group" style="justify-content: center;">
+            <button class="chip active" data-cat="all">✨ Tümü</button>
+            <button class="chip" data-cat="gorev">🎯 Eğlenceli Görev</button>
+            <button class="chip" data-cat="soru">💬 Tatlı Soru</button>
+          </div>
+
+          <div class="play-card-scene" id="play-card-scene">
+            <div class="play-card" id="play-card">
+              <div class="play-card-face play-card-back">
+                <div style="font-size: 3rem; margin-bottom: 10px;">💌</div>
+                <div style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem;">Havva &amp; Berat</div>
+                <div style="opacity: 0.88; font-size: 0.88rem; margin-top: 6px;">Kart çekmek için dokun!</div>
+              </div>
+              <div class="play-card-face play-card-front">
+                <span class="card-tag gorev" id="drawn-card-tag">Eğlenceli Görev</span>
+                <div class="play-card-text" id="drawn-card-text">Kart çekmek için butona bas!</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="draw-card-btn" style="min-width: 220px;">
+            🃏 Yeni Kart Çek
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h3>Kendi Kartını Ekle</h3>
+              <p>Desteye ikinize özel şakalar veya görevler ekleyin.</p>
+            </div>
+          </div>
+
+          <form class="form-stack" id="card-add-form">
+            <div class="who-row" style="margin-bottom:0;">
+              <span class="who-label">Kim ekliyor?</span>
+              <div class="who-picker" data-who-picker="card">
+                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+              </div>
+            </div>
+            <select class="select" id="card-cat-select">
+              <option value="gorev">🎯 Eğlenceli Görev</option>
+              <option value="soru">💬 Tatlı Soru</option>
+            </select>
+            <textarea class="textarea" id="card-text-input" rows="3" placeholder="Örn: Birbirimizin en sevdiği şarkıyı tahmin edelim..."></textarea>
+            <button class="btn btn-primary" type="submit">🔐 PIN ile Desteye Ekle</button>
+          </form>
+
+          <div style="margin-top: 18px;">
+            <div style="font-weight: 800; font-size: 0.88rem; margin-bottom: 8px; color: var(--muted);">Eklediğiniz Özel Kartlar</div>
+            <div class="item-list" id="custom-cards-list" style="max-height: 190px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. MOVIES -->
+    <section class="panel" id="panel-movies">
+      <div class="movie-grid">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>🎬 Ne İzleyelim?</h2>
+              <p>Tür seç, istersen "Sadece Türk" veya "Bizim Listemiz" de ve çevir!</p>
+            </div>
+            <span class="badge-soft" id="movie-match-badge">0 film</span>
+          </div>
+
+          <div class="chip-group" id="movie-genre-group">
+            <button class="chip active" data-genre="Tümü">✨ Tümü</button>
+            <button class="chip" data-genre="Bizim Listemiz" id="chip-our-list">💖 Bizim Listemiz (0)</button>
+            <button class="chip" data-genre="Romantik">💕 Romantik</button>
+            <button class="chip" data-genre="Komedi">😂 Komedi</button>
+            <button class="chip" data-genre="Dram">🎭 Dram</button>
+            <button class="chip" data-genre="Gerilim">🕵️ Gerilim</button>
+            <button class="chip" data-genre="Aksiyon">💥 Aksiyon</button>
+            <button class="chip" data-genre="Animasyon">🎨 Animasyon</button>
+            <button class="chip" data-genre="Bilim Kurgu">🚀 Bilim Kurgu</button>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <button type="button" class="chip" id="movie-tr-toggle" style="border-color: rgba(255, 86, 120, 0.35);">
+              🇹🇷 Sadece Türk Filmleri: Kapalı
+            </button>
+          </div>
+
+          <div class="movie-spotlight" id="movie-spotlight">
+            <h3>Hangi filmi izlesek?</h3>
+            <p>Kategori seç ve "Rastgele Öner" butonuna bas, birlikte izleyecek harika bir film bulalım.</p>
+            <span class="movie-meta">🍿 Hazır mısınız?</span>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="suggest-movie-btn" style="flex: 1;">🎲 Rastgele Öner</button>
+            <button class="btn btn-secondary" id="add-suggested-watchlist-btn" style="display: none;">+ Bizim Listeye Ekle</button>
+          </div>
+        </div>
+
+        <div class="card" id="watchlist-form-card">
+          <div class="section-head">
+            <div>
+              <h3 id="watchlist-form-title">➕ Bizim Listemize Ekle</h3>
+              <p id="watchlist-form-sub">Eklediğiniz film ve diziler direkt <strong>💖 Bizim Listemiz</strong> seçeneğinin içine gider.</p>
+            </div>
+            <span class="badge-soft" id="watchlist-count-badge">0 film</span>
+          </div>
+
+          <form class="form-stack" id="watchlist-add-form">
+            <div class="who-row" style="margin-bottom:0;">
+              <span class="who-label">Kim ekliyor?</span>
+              <div class="who-picker" data-who-picker="watchlist">
+                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+              </div>
+            </div>
+            <input class="input" id="watchlist-input" type="text" placeholder="Film veya dizi adı..." maxlength="60" required />
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <select class="select" id="watchlist-genre-select" style="flex:1;min-width:140px;">
+                <option value="Genel">🎭 Tür (Opsiyonel)</option>
+                <option value="Romantik">💕 Romantik</option>
+                <option value="Komedi">😂 Komedi</option>
+                <option value="Dram">🎭 Dram</option>
+                <option value="Gerilim">🕵️ Gerilim</option>
+                <option value="Aksiyon">💥 Aksiyon</option>
+                <option value="Animasyon">🎨 Animasyon</option>
+                <option value="Bilim Kurgu">🚀 Bilim Kurgu</option>
+              </select>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.84rem;font-weight:700;cursor:pointer;padding:8px 12px;background:#fff;border:1.5px solid var(--border);border-radius:12px;">
+                <input type="checkbox" id="watchlist-tr-check" style="width:16px;height:16px;" />
+                <span>🇹🇷 Türk</span>
+              </label>
+            </div>
+            <textarea class="textarea" id="watchlist-desc-input" rows="2" placeholder="Kısa açıklama / not (opsiyonel)..." maxlength="240"></textarea>
+            <button class="btn btn-primary" id="watchlist-submit-btn" type="submit">🔐 PIN ile Listemize Gönder</button>
+            <button class="btn btn-ghost btn-sm" id="watchlist-cancel-edit-btn" type="button" style="display:none;">Vazgeç (Düzenlemeyi İptal Et)</button>
+          </form>
+
+          <div class="list-footer" style="margin-top: 16px;">
+            <span style="font-size:0.8rem;">Seçmek için soldan <strong>💖 Bizim Listemiz</strong>'i seçin.</span>
+            <button type="button" class="btn btn-ghost btn-sm" id="toggle-watchlist-manage">👁️ Listeyi Yönet</button>
+          </div>
+
+          <div class="item-list" id="watchlist-items" style="display:none; max-height: 220px; margin-top: 12px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MEMORIES -->
+    <section class="panel" id="panel-memories">
+      <div class="mobile-composer-bar" id="mobile-composer-bar">
+        <div class="mobile-composer-left">
+          <div class="mobile-composer-avatar">💖</div>
+          <span>Yeni bir anı paylaş...</span>
+        </div>
+        <span class="btn btn-primary btn-sm" style="pointer-events:none;">➕ Paylaş</span>
+      </div>
+
+      <div class="memory-grid">
+        <div class="card" id="memory-form-card">
+          <div class="section-head">
+            <div>
+              <h2 id="memory-form-title">📝 Yeni Anı Ekle</h2>
+              <p id="memory-form-sub">Yaptığınız planları küçük bir notla ölümsüzleştirin.</p>
+            </div>
+          </div>
+
+          <form class="form-stack" id="memory-form">
+            <div class="who-row" style="margin-bottom:0;">
+              <span class="who-label">Kim ekliyor?</span>
+              <div class="who-picker" data-who-picker="memory">
+                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 6px;">Emoji Seç</div>
+              <div class="emoji-picker" id="memory-emoji-picker">
+                <button type="button" class="emoji-opt active" data-emoji="💖">💖</button>
+                <button type="button" class="emoji-opt" data-emoji="🍕">🍕</button>
+                <button type="button" class="emoji-opt" data-emoji="🧱">🧱</button>
+                <button type="button" class="emoji-opt" data-emoji="💎">💎</button>
+                <button type="button" class="emoji-opt" data-emoji="🎬">🎬</button>
+                <button type="button" class="emoji-opt" data-emoji="☕">☕</button>
+                <button type="button" class="emoji-opt" data-emoji="🌅">🌅</button>
+              </div>
+            </div>
+            <input class="input" id="memory-title-input" type="text" placeholder="Ne yaptık? (Örn. Mr. DIY'dan lego aldık)" required maxlength="70" />
+            <input class="input" id="memory-date-input" type="date" />
+            <textarea class="textarea" id="memory-note-input" rows="3" placeholder="Küçük bir not..."></textarea>
+            <label class="photo-upload-label" for="memory-photo-input">
+              <span>📷</span>
+              <span id="memory-photo-label-text">Fotoğraf Ekle (HD • Birden fazla seçilebilir, maks 8)</span>
+              <input id="memory-photo-input" type="file" accept="image/*" multiple style="display:none;" />
+            </label>
+            <div class="photo-preview-grid" id="memory-photo-preview-grid"></div>
+            <button class="btn btn-primary" id="memory-submit-btn" type="submit">🔐 PIN ile Anılara Kaydet</button>
+            <button class="btn btn-ghost btn-sm" id="memory-cancel-edit-btn" type="button" style="display:none;">Vazgeç (Düzenlemeyi İptal Et)</button>
+          </form>
+        </div>
+
+        <div class="card memory-feed-card">
+          <div class="section-head">
+            <div>
+              <h3>Havva &amp; Berat Anı Akışı</h3>
+              <p>Fotoğrafları sağa-sola kaydırabilir, tıklayıp büyütebilirsin.</p>
+            </div>
+            <span class="badge-soft" id="memory-count-badge">0 anı</span>
+          </div>
+
+          <div class="memory-list" id="memory-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-nav" aria-label="Mobil Menü">
+    <button class="active" data-tab="food"><span class="ico">🍕</span><span>Yemek</span></button>
+    <button data-tab="activity"><span class="ico">🎡</span><span>Plan</span></button>
+    <button data-tab="decider"><span class="ico">🪙</span><span>Kim?</span></button>
+    <button data-tab="cards"><span class="ico">🃏</span><span>Kart</span></button>
+    <button data-tab="movies"><span class="ico">🎬</span><span>Film</span></button>
+    <button data-tab="memories"><span class="ico">📝</span><span>Anılar</span></button>
+  </nav>
+
+  <!-- Wheel Result Modal -->
+  <div class="modal-backdrop" id="result-modal">
+    <div class="modal-card">
+      <div class="modal-badge" id="modal-badge">🎉</div>
+      <div class="modal-label" id="modal-label">Kader Seçti!</div>
+      <div class="modal-winner" id="modal-winner">Sonuç</div>
+      <div class="modal-sub" id="modal-sub">Havva &amp; Berat için harika bir seçim!</div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="modal-save-memory">💖 Bunu Yapıyoruz! (Anılara Ekle)</button>
+        <button class="btn btn-secondary" id="modal-respin">🔄 Tekrar Çevir</button>
+        <button class="btn btn-ghost" id="modal-close">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN Login Modal -->
+  <div class="modal-backdrop" id="pin-modal">
+    <div class="modal-card" style="max-width: 350px;">
+      <div style="font-size: 2.3rem; margin-bottom: 6px;">🔐</div>
+      <h2 id="pin-modal-title" style="font-size: 1.35rem;">PIN Doğrulama</h2>
+      <p id="pin-modal-sub" style="font-size: 0.84rem; color: var(--muted); margin-top: 4px;">Devam etmek için 4 haneli PIN kodunu girin</p>
+
+      <div class="pin-dots" id="pin-dots">
+        <span class="pin-dot"></span>
+        <span class="pin-dot"></span>
+        <span class="pin-dot"></span>
+        <span class="pin-dot"></span>
+      </div>
+
+      <div class="pin-pad" id="pin-pad">
+        <button type="button" class="pin-key" data-num="1">1</button>
+        <button type="button" class="pin-key" data-num="2">2</button>
+        <button type="button" class="pin-key" data-num="3">3</button>
+        <button type="button" class="pin-key" data-num="4">4</button>
+        <button type="button" class="pin-key" data-num="5">5</button>
+        <button type="button" class="pin-key" data-num="6">6</button>
+        <button type="button" class="pin-key" data-num="7">7</button>
+        <button type="button" class="pin-key" data-num="8">8</button>
+        <button type="button" class="pin-key" data-num="9">9</button>
+        <button type="button" class="pin-key" id="pin-clear" style="font-size: 0.9rem;">Temizle</button>
+        <button type="button" class="pin-key" data-num="0">0</button>
+        <button type="button" class="pin-key" id="pin-back">⌫</button>
+      </div>
+
+      <button class="btn btn-ghost btn-sm" id="pin-cancel" style="width: 100%;">Vazgeç</button>
+    </div>
+  </div>
+
+  <!-- Photo Lightbox Modal -->
+  <div class="modal-backdrop" id="photo-lightbox">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <img class="lightbox-img" id="lightbox-img" alt="Anı fotoğrafı" />
+      <div class="lightbox-nav-row">
+        <button class="btn btn-ghost btn-sm" id="lightbox-prev" style="background:rgba(255,255,255,0.92);display:none;">‹ Önceki</button>
+        <span class="lightbox-counter" id="lightbox-counter" style="display:none;">1 / 1</span>
+        <button class="btn btn-ghost btn-sm" id="lightbox-next" style="background:rgba(255,255,255,0.92);display:none;">Sonraki ›</button>
+        <button class="btn btn-ghost btn-sm" id="lightbox-close" style="background:rgba(255,255,255,0.92);">✕ Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel Modal -->
+  <div class="modal-backdrop" id="admin-modal">
+    <div class="admin-modal-card">
+      <div class="admin-header">
+        <div>
+          <h2>🛠️ Havva &amp; Berat — Bugün Ne? (Admin)</h2>
+          <p>Tüm çarkları, kartları, filmleri düzenle ve yeni varsayılan (default) olarak kaydet.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="admin-close-btn" style="background: rgba(255,255,255,0.14); color: #fff;">✕ Kapat</button>
+      </div>
+
+      <div class="admin-tabs" id="admin-tabs">
+        <button class="admin-tab active" data-atab="foods">🍕 Yemekler</button>
+        <button class="admin-tab" data-atab="activities">🎡 Aktiviteler</button>
+        <button class="admin-tab" data-atab="cards">🃏 Tüm Kartlar</button>
+        <button class="admin-tab" data-atab="movies">🎬 Film Önerileri</button>
+        <button class="admin-tab" data-atab="settings">⚙️ PIN &amp; Default Ayarları</button>
+      </div>
+
+      <div class="admin-body">
+        <!-- Admin: Foods -->
+        <div class="admin-section active" id="admin-sec-foods">
+          <div class="admin-toolbar">
+            <div>
+              <strong>Yemek Çarkı Yönetimi</strong>
+              <div style="font-size:0.78rem;color:var(--muted);" id="admin-foods-default-info"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-success btn-sm" id="admin-save-def-foods">📌 Bunu Yeni Default Yap</button>
+              <button class="btn btn-ghost btn-sm" id="admin-factory-foods">↺ Fabrika Ayarına Dön</button>
+            </div>
+          </div>
+          <form class="add-row" id="admin-add-food-form">
+            <input class="input" id="admin-add-food-input" type="text" placeholder="Yeni yemek ekle..." maxlength="40" />
+            <button class="btn btn-primary btn-sm" type="submit">+ Ekle</button>
+          </form>
+          <div id="admin-foods-list"></div>
+        </div>
+
+        <!-- Admin: Activities -->
+        <div class="admin-section" id="admin-sec-activities">
+          <div class="admin-toolbar">
+            <div>
+              <strong>Aktivite Çarkı Yönetimi</strong>
+              <div style="font-size:0.78rem;color:var(--muted);" id="admin-activities-default-info"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-success btn-sm" id="admin-save-def-activities">📌 Bunu Yeni Default Yap</button>
+              <button class="btn btn-ghost btn-sm" id="admin-factory-activities">↺ Fabrika Ayarına Dön</button>
+            </div>
+          </div>
+          <form class="add-row" id="admin-add-activity-form">
+            <input class="input" id="admin-add-activity-input" type="text" placeholder="Yeni aktivite ekle..." maxlength="60" />
+            <button class="btn btn-primary btn-sm" type="submit">+ Ekle</button>
+          </form>
+          <div id="admin-activities-list"></div>
+        </div>
+
+        <!-- Admin: Cards -->
+        <div class="admin-section" id="admin-sec-cards">
+          <div class="admin-toolbar">
+            <div>
+              <strong>Tüm Kartlar (Varsayılan + Özel)</strong>
+              <div style="font-size:0.78rem;color:var(--muted);" id="admin-cards-default-info"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-success btn-sm" id="admin-save-def-cards">📌 Desteyi Yeni Default Yap</button>
+              <button class="btn btn-ghost btn-sm" id="admin-factory-cards">↺ Fabrika Ayarına Dön</button>
+            </div>
+          </div>
+          <form class="add-row" id="admin-add-card-form">
+            <select class="select" id="admin-add-card-cat" style="max-width: 165px;">
+              <option value="gorev">🎯 Görev</option>
+              <option value="soru">💬 Soru</option>
+            </select>
+            <input class="input" id="admin-add-card-input" type="text" placeholder="Yeni kart metni yaz..." />
+            <button class="btn btn-primary btn-sm" type="submit">+ Ekle</button>
+          </form>
+          <div id="admin-cards-list"></div>
+        </div>
+
+        <!-- Admin: Movies -->
+        <div class="admin-section" id="admin-sec-movies">
+          <div class="admin-toolbar">
+            <div>
+              <strong>Film Öneri Havuzu Yönetimi</strong>
+              <div style="font-size:0.78rem;color:var(--muted);" id="admin-movies-default-info"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-success btn-sm" id="admin-save-def-movies">📌 Filmleri Yeni Default Yap</button>
+              <button class="btn btn-ghost btn-sm" id="admin-factory-movies">↺ Fabrika Ayarına Dön</button>
+            </div>
+          </div>
+          <form class="admin-movie-card" id="admin-add-movie-form" style="background: #fff5f7; border-color: rgba(255,86,120,0.25);">
+            <div style="font-weight:800;font-size:0.86rem;">+ Yeni Film Önerisi Ekle</div>
+            <div class="admin-movie-top">
+              <input class="input" id="admin-movie-title" type="text" placeholder="Film adı" required />
+              <select class="select" id="admin-movie-genre">
+                <option value="Romantik">Romantik</option>
+                <option value="Komedi">Komedi</option>
+                <option value="Dram">Dram</option>
+                <option value="Gerilim">Gerilim</option>
+                <option value="Aksiyon">Aksiyon</option>
+                <option value="Animasyon">Animasyon</option>
+                <option value="Bilim Kurgu">Bilim Kurgu</option>
+              </select>
+              <input class="input" id="admin-movie-year" type="number" placeholder="Yıl" value="2023" min="1950" max="2030" />
+              <button class="btn btn-primary btn-sm" type="submit">Ekle</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="input" id="admin-movie-desc" type="text" placeholder="Kısa açıklama..." style="flex:1;" />
+              <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;font-weight:700;white-space:nowrap;">
+                <input type="checkbox" id="admin-movie-tr" /> 🇹🇷 Türk
+              </label>
+            </div>
+          </form>
+          <div id="admin-movies-list"></div>
+        </div>
+
+        <!-- Admin: Settings & PIN -->
+        <div class="admin-section" id="admin-sec-settings">
+          <div class="card" style="box-shadow:none; margin-bottom:14px;">
+            <h3 style="margin-bottom:6px;">📌 Tek Tıkla Tüm Varsayılanları Sabitle</h3>
+            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
+              Şu an sitede bulunan tüm yemekleri, aktiviteleri, kartları ve filmleri sitenin yeni <strong>default (varsayılan)</strong> hali olarak kaydeder. Bundan sonra "Varsayılanlara Sıfırla" dendiğinde bu hal gelir.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-sm" id="admin-save-all-defaults">📌 Her Şeyi Yeni Default Yap</button>
+              <button class="btn btn-danger btn-sm" id="admin-factory-all">⚠️ Tüm Siteyi Fabrika Ayarına Döndür</button>
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none; margin-bottom:14px;">
+            <h3 style="margin-bottom:6px;">🔑 Admin PIN Kodunu Değiştir</h3>
+            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">Yeni 4 haneli sadece rakamlardan oluşan PIN belirleyin.</p>
+            <form class="add-row" id="admin-pin-form" style="max-width:340px;margin-bottom:0;">
+              <input class="input" id="admin-new-pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="Yeni 4 haneli PIN" required />
+              <button class="btn btn-primary btn-sm" type="submit">Kaydet</button>
+            </form>
+          </div>
+
+          <div class="card" style="box-shadow:none;">
+            <h3 style="margin-bottom:6px;">💾 Yedekle / Başka Cihaza Aktar (JSON)</h3>
+            <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
+              Tüm listelerinizi, kartlarınızı, default ayarlarınızı ve anılarınızı dosya olarak indirip telefonunuzda veya başka bilgisayarda yükleyebilirsiniz.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="admin-export-btn">⬇️ Yedeği İndir (.json)</button>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+                ⬆️ Yedek Yükle (.json)
+                <input type="file" id="admin-import-file" accept=".json,application/json" style="display:none;" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">Kaydedildi!</div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+    import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+    // ==============================
+    // FIREBASE REALTIME CLOUD SYNC
+    // ==============================
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2rT088RLW0XFZWCoUSgqUEDXrQhrM7G0",
+      authDomain: "havva-berat-bugun-ne.firebaseapp.com",
+      projectId: "havva-berat-bugun-ne",
+      storageBucket: "havva-berat-bugun-ne.firebasestorage.app",
+      messagingSenderId: "107528439340",
+      appId: "1:107528439340:web:07b9a229e2b3f756f9f389"
+    };
+
+    let db = null;
+    let stateDocRef = null;
+    let memoriesColRef = null;
+    let cloudReady = false;
+    let lastLocalWriteAt = 0;
+    let syncDebounceTimer = null;
+
+    function setSyncBadge(dot, text) {
+      const d = document.getElementById('sync-dot');
+      const t = document.getElementById('sync-text');
+      if (d) d.textContent = dot;
+      if (t) t.textContent = text;
+    }
+
+    try {
+      const fbApp = initializeApp(firebaseConfig);
+      db = getFirestore(fbApp);
+      stateDocRef = doc(db, 'app_state', 'havva_berat');
+      memoriesColRef = collection(db, 'memories');
+    } catch (e) {
+      console.warn('Firebase başlatılamadı, yerel mod aktif:', e);
+      setSyncBadge('🔴', 'Yerel');
+    }
+
+    // ==============================
+    // FACTORY DEFAULTS & STORAGE
+    // ==============================
+    const STORAGE_KEY = 'havva_berat_v2';
+
+    const FACTORY_FOODS = [
+      { id: 'f1', text: 'Pilav', active: true },
+      { id: 'f2', text: 'Popeyes', active: true },
+      { id: 'f3', text: 'Pizza', active: true },
+      { id: 'f4', text: 'Çıtır Tavuk', active: true },
+      { id: 'f5', text: 'Tavuk Döner', active: true },
+      { id: 'f6', text: 'Hamburger', active: true },
+      { id: 'f7', text: 'Tantuni', active: true },
+      { id: 'f8', text: 'Makarna', active: true },
+      { id: 'f9', text: 'Çiğ Köfte', active: true },
+      { id: 'f10', text: 'Waffle / Tatlı', active: true }
+    ];
+
+    const FACTORY_ACTIVITIES = [
+      { id: 'a1', text: 'Kafede laptoptan film izleyelim 💻', active: true },
+      { id: 'a2', text: "Mr. DIY'dan lego alıp kafede yapalım 🧱", active: true },
+      { id: 'a3', text: 'Taş yapıştırma alıp yapalım 💎', active: true },
+      { id: 'a4', text: 'Sinemaya gidelim 🍿', active: true },
+      { id: 'a5', text: "Safranbolu'da yürüyüş + kahve ☕", active: true },
+      { id: 'a6', text: 'Kafede karşılıklı resim / boyama 🎨', active: true },
+      { id: 'a7', text: 'Uno / Jenga kapışması 🎲', active: true },
+      { id: 'a8', text: 'Bowling veya bilardo oynayalım 🎳', active: true },
+      { id: 'a9', text: 'Hiç gitmediğimiz bir kafe keşfedelim 🗺️', active: true },
+      { id: 'a10', text: 'Termosla çay + manzara keyfi 🌅', active: true },
+      { id: 'a11', text: 'Birlikte tatlı yapma challenge 👩‍🍳', active: true }
+    ];
+
+    const FACTORY_CARDS = [
+      { id: 'c1', cat: 'gorev', text: '30 saniyede birbirinizin portresini çizin, en komik olan kazanır!', custom: false },
+      { id: 'c2', cat: 'gorev', text: 'Taş-Kağıt-Makas (3 olan kazanır): Kaybeden tatlı veya kahve ısmarlar!', custom: false },
+      { id: 'c3', cat: 'gorev', text: 'Galerindeki en komik fotoğrafını diğerine göster!', custom: false },
+      { id: 'c4', cat: 'gorev', text: 'Aklından bir şarkı tut ve sadece mırıldanarak diğerine buldur!', custom: false },
+      { id: 'c5', cat: 'gorev', text: 'Birbirinize 1 dakika boyunca hiç gülmeden bakın. İlk gülen kaybeder!', custom: false },
+      { id: 'c6', cat: 'gorev', text: 'Şu an bulunduğunuz ortamda en tatlı fotoğrafı çekin ve saklayın 📸', custom: false },
+      { id: 'c7', cat: 'gorev', text: 'Karşındakinin en sevdiği yemeği, rengi ve şarkıyı 10 saniyede say!', custom: false },
+      { id: 'c8', cat: 'soru', text: 'Birlikte en çok güldüğümüz ve asla unutamayacağın an hangisiydi?', custom: false },
+      { id: 'c9', cat: 'soru', text: 'Bende en çok sevdiğin 3 şey ne?', custom: false },
+      { id: 'c10', cat: 'soru', text: 'Yarın piyango çıksa ilk olarak nereye tatile gideriz?', custom: false },
+      { id: 'c11', cat: 'soru', text: 'Beni ilk gördüğünde aklından geçen ilk şey neydi?', custom: false },
+      { id: 'c12', cat: 'soru', text: 'Birlikte mutlaka yapmak istediğin ama henüz yapmadığımız şey ne?', custom: false },
+      { id: 'c13', cat: 'soru', text: 'İkimizin hayatını anlatan bir film çekilse adı ne olurdu?', custom: false },
+      { id: 'c14', cat: 'soru', text: 'Bana yemek yapacaksın ve menü sende: Ne pişirirdin?', custom: false }
+    ];
+
+    const FACTORY_MOVIES = [
+      // === TÜRK KOMEDİ ===
+      { id: 'tr1', title: 'G.O.R.A.', genre: 'Komedi', year: 2004, isTurkish: true, desc: 'Arif’in uzaylılar tarafından kaçırılmasıyla başlayan efsane Türk komedisi.' },
+      { id: 'tr2', title: 'A.R.O.G.', genre: 'Komedi', year: 2008, isTurkish: true, desc: 'Arif bu kez 1 milyon yıl öncesine ışınlanıyor, kahkaha garanti.' },
+      { id: 'tr3', title: 'Yahşi Batı', genre: 'Komedi', year: 2010, isTurkish: true, desc: 'İki Osmanlı elçisinin Vahşi Batı’daki absürt ve çok eğlenceli macerası.' },
+      { id: 'tr4', title: 'Ölümlü Dünya', genre: 'Komedi', year: 2018, isTurkish: true, desc: 'Haydarpaşa’da lokanta işleten ama aslında gizli kiralık katil olan ailenin efsane hikayesi.' },
+      { id: 'tr5', title: 'Ölümlü Dünya 2', genre: 'Komedi', year: 2023, isTurkish: true, desc: 'Mermer ailesi geri dönüyor; tempo ve mizah hiç düşmüyor.' },
+      { id: 'tr6', title: 'Organize İşler', genre: 'Komedi', year: 2005, isTurkish: true, desc: 'İstanbul’un dolandırıcılık dünyasında geçen hızlı, zekice ve bol esprili klasik.' },
+      { id: 'tr7', title: 'Vizontele', genre: 'Komedi', year: 2001, isTurkish: true, desc: 'Bir kasabaya ilk kez televizyon gelmesiyle yaşanan hem komik hem sıcacık hikaye.' },
+      { id: 'tr8', title: 'Hababam Sınıfı', genre: 'Komedi', year: 1975, isTurkish: true, desc: 'Her izlendiğinde aynı tadı veren, tüm zamanların en sevilen Yeşilçam klasiği.' },
+      { id: 'tr9', title: 'Tosun Paşa', genre: 'Komedi', year: 1976, isTurkish: true, desc: 'Yeşil Vadi uğruna iki ailenin kapışması ve Şaban’ın unutulmaz Tosun Paşa rolü.' },
+      { id: 'tr10', title: 'Süt Kardeşler', genre: 'Komedi', year: 1976, isTurkish: true, desc: 'Gulyabani, Ramazan ve Şaban ile kahkaha dolu efsane Yeşilçam gecesi.' },
+      { id: 'tr11', title: 'Kibar Feyzo', genre: 'Komedi', year: 1978, isTurkish: true, desc: 'Hem güldüren hem düşündüren başyapıt Kemal Sunal filmi.' },
+      { id: 'tr12', title: 'Çöpçüler Kralı', genre: 'Komedi', year: 1977, isTurkish: true, desc: 'Abdi’nin Hacer’e olan saf aşkı ve mahalle komedisi.' },
+      { id: 'tr13', title: 'Düğün Dernek', genre: 'Komedi', year: 2013, isTurkish: true, desc: 'Sivas’ta imece usulü düğün yapmaya çalışan ekibin aşırı komik halleri.' },
+      { id: 'tr14', title: 'Eyyvah Eyvah', genre: 'Komedi', year: 2010, isTurkish: true, desc: 'Klarnetçi Hüseyin’in babasını aramak için çıktığı sıcak ve kahkahalı İstanbul yolculuğu.' },
+      { id: 'tr15', title: 'Kolpaçino', genre: 'Komedi', year: 2009, isTurkish: true, desc: 'Bir gece içinde çığırından çıkan olaylar ve kült replikler.' },
+      { id: 'tr16', title: 'Cinayet Süsü', genre: 'Komedi', year: 2019, isTurkish: true, desc: 'Ali Atay imzalı, polisiye ile absürt komediyi harmanlayan süper eğlenceli film.' },
+      { id: 'tr17', title: 'Aile Arasında', genre: 'Komedi', year: 2017, isTurkish: true, desc: 'Gülse Birsel senaryosuyla baştan sona keyifli, enerjik aile komedisi.' },
+      { id: 'tr18', title: 'Hokkabaz', genre: 'Komedi', year: 2006, isTurkish: true, desc: 'Hem güldüren hem duygulandıran, baba-oğul temalı çok özel Cem Yılmaz filmi.' },
+      { id: 'tr19', title: 'Pek Yakında', genre: 'Komedi', year: 2014, isTurkish: true, desc: 'Ailesini geri kazanmak için film çekmeye kalkışan Zafer’in tatlı hikayesi.' },
+
+      // === TÜRK ROMANTİK ===
+      { id: 'tr20', title: 'Issız Adam', genre: 'Romantik', year: 2008, isTurkish: true, desc: 'Beyoğlu sokakları, eski plaklar ve unutulmaz bir İstanbul aşkı.' },
+      { id: 'tr21', title: 'Aşk Tesadüfleri Sever', genre: 'Romantik', year: 2011, isTurkish: true, desc: 'Çocukluktan itibaren yolları defalarca kesişen Özgür ve Deniz’in hikayesi.' },
+      { id: 'tr22', title: 'Selvi Boylum Al Yazmalım', genre: 'Romantik', year: 1978, isTurkish: true, desc: '“Sevgi neydi? Sevgi emekti…” Türk sinemasının en efsane aşk filmi.' },
+      { id: 'tr23', title: 'İncir Reçeli', genre: 'Romantik', year: 2011, isTurkish: true, desc: 'Duygusal, şiirsel ve derin bir aşk hikayesi.' },
+      { id: 'tr24', title: 'Delibal', genre: 'Romantik', year: 2015, isTurkish: true, desc: 'Tutkulu, enerjik ama kalbe dokunan modern bir aşk filmi.' },
+      { id: 'tr25', title: 'Sadece Sen', genre: 'Romantik', year: 2014, isTurkish: true, desc: 'Eski bir boksör ile görme engelli genç bir kadının sıcacık aşkı.' },
+      { id: 'tr26', title: 'Bi Küçük Eylül Meselesi', genre: 'Romantik', year: 2014, isTurkish: true, desc: 'Bozcaada’nın büyülü atmosferinde geçen gizemli ve romantik hikaye.' },
+      { id: 'tr27', title: 'Hadi İnşallah', genre: 'Romantik', year: 2014, isTurkish: true, desc: 'Pucca’nın kitabından uyarlanan eğlenceli ve bol kahkahalı romantik komedi.' },
+      { id: 'tr28', title: 'Kardeşim Benim', genre: 'Romantik', year: 2016, isTurkish: true, desc: 'İki küs kardeşin yol hikayesi, müzik ve tatlı bir aşk.' },
+      { id: 'tr29', title: 'Evim Sensin', genre: 'Romantik', year: 2012, isTurkish: true, desc: 'Mendilleri hazırlatacak, çok duygusal bir aşk filmi.' },
+
+      // === TÜRK DRAM ===
+      { id: 'tr30', title: 'Babam ve Oğlum', genre: 'Dram', year: 2005, isTurkish: true, desc: 'Türk sinemasının en duygusal ve en sevilen aile başyapıtlarından biri.' },
+      { id: 'tr31', title: 'Ayla', genre: 'Dram', year: 2017, isTurkish: true, desc: 'Kore Savaşı’nda küçük bir kızla Türk askerinin gerçek ve unutulmaz bağı.' },
+      { id: 'tr32', title: '7. Koğuştaki Mucize', genre: 'Dram', year: 2019, isTurkish: true, desc: 'Memo ve kızı Ova’nın kalpleri ısıtan, gözyaşlarını tutamayacağınız hikayesi.' },
+      { id: 'tr33', title: 'Eşkıya', genre: 'Dram', year: 1996, isTurkish: true, desc: 'Şener Şen ve Uğur Yücel ile Türk sinemasının dönüm noktası olan efsane film.' },
+      { id: 'tr34', title: 'Kelebeğin Rüyası', genre: 'Dram', year: 2013, isTurkish: true, desc: 'Zonguldak’ta iki genç şairin şiir, dostluk ve aşk dolu dokunaklı hikayesi.' },
+      { id: 'tr35', title: 'Müslüm', genre: 'Dram', year: 2018, isTurkish: true, desc: 'Müslüm Gürses’in zorlu ama etkileyici hayat yolculuğu.' },
+      { id: 'tr36', title: 'Cep Herkülü: Naim Süleymanoğlu', genre: 'Dram', year: 2019, isTurkish: true, desc: 'Dünya rekorları kıran efsane haltercimizin gurur dolu biyografisi.' },
+      { id: 'tr37', title: 'Bergen', genre: 'Dram', year: 2022, isTurkish: true, desc: 'Güçlü oyunculuk ve müziklerle etkileyici bir biyografi.' },
+      { id: 'tr38', title: 'Kış Uykusu', genre: 'Dram', year: 2014, isTurkish: true, desc: 'Kapadokya’nın karlı manzarasında Altın Palmiye ödüllü Nuri Bilge Ceylan başyapıtı.' },
+      { id: 'tr39', title: 'Ahlat Ağacı', genre: 'Dram', year: 2018, isTurkish: true, desc: 'Üniversiteden memleketine dönen genç bir yazarın derin ve gerçekçi hikayesi.' },
+
+      // === TÜRK GERİLİM / AKSİYON / ANİMASYON ===
+      { id: 'tr40', title: 'Av Mevsimi', genre: 'Gerilim', year: 2010, isTurkish: true, desc: 'Şener Şen, Cem Yılmaz ve Çetin Tekindor ile sürükleyici Türk polisiyesi.' },
+      { id: 'tr41', title: 'Behzat Ç.: Seni Kalbime Gömdüm', genre: 'Gerilim', year: 2011, isTurkish: true, desc: 'Ankara’nın sert polisiyesi, karanlık gizem ve ikonik diyaloglar.' },
+      { id: 'tr42', title: 'Ejder Kapanı', genre: 'Gerilim', year: 2010, isTurkish: true, desc: 'İki dedektifin seri katil peşindeki nefes kesen takibi.' },
+      { id: 'tr43', title: 'Dağ II', genre: 'Aksiyon', year: 2016, isTurkish: true, desc: 'Yüksek tempolu, heyecan dolu ve çok sevilen Türk aksiyon-savaş filmi.' },
+      { id: 'tr44', title: 'Dağ', genre: 'Aksiyon', year: 2012, isTurkish: true, desc: 'Zorlu dağ koşullarında iki askerin hayatta kalma ve kardeşlik mücadelesi.' },
+      { id: 'tr45', title: 'Börü', genre: 'Aksiyon', year: 2018, isTurkish: true, desc: 'Özel harekat ekibinin aksiyon dolu operasyonu.' },
+      { id: 'tr46', title: 'Kötü Kedi Şerafettin', genre: 'Animasyon', year: 2016, isTurkish: true, desc: 'Beyoğlu’nun en belalı kedisi Şero’nun yetişkinlere özel çok komik animasyonu.' },
+
+      // === YABANCI ROMANTİK ===
+      { id: 'mv1', title: 'About Time', genre: 'Romantik', year: 2013, isTurkish: false, desc: 'Zamanda yolculuk edebilen bir gencin aşkı ve hayatın küçük anlarını keşfetmesi.' },
+      { id: 'mv2', title: '10 Things I Hate About You', genre: 'Romantik', year: 1999, isTurkish: false, desc: 'Klasik, enerjik ve gülümseten lise romantik komedisi.' },
+      { id: 'mv3', title: 'La La Land', genre: 'Romantik', year: 2016, isTurkish: false, desc: 'Müzik, renkler, hayaller ve unutulmaz bir aşk hikayesi.' },
+      { id: 'mv4', title: 'The Notebook (Not Defteri)', genre: 'Romantik', year: 2004, isTurkish: false, desc: 'Yıllara meydan okuyan, tüm zamanların en sevilen romantik filmlerinden.' },
+      { id: 'mv5', title: 'Pride & Prejudice (Aşk ve Gurur)', genre: 'Romantik', year: 2005, isTurkish: false, desc: 'Zarif diyaloglar, harika atmosfer ve klasik bir aşk hikayesi.' },
+      { id: 'mv6', title: 'Before Sunrise (Gün Doğmadan)', genre: 'Romantik', year: 1995, isTurkish: false, desc: 'Viyana sokaklarında tek bir gece boyunca sohbet eden iki yabancının büyüsü.' },
+      { id: 'mv7', title: 'Eternal Sunshine of the Spotless Mind', genre: 'Romantik', year: 2004, isTurkish: false, desc: 'Ayrılık sonrası anılarını sildiren bir çiftin benzersiz ve unutulmaz hikayesi.' },
+      { id: 'mv8', title: 'Notting Hill', genre: 'Romantik', year: 1999, isTurkish: false, desc: 'Sıradan bir kitapçı ile dünyaca ünlü bir yıldızın sıcacık Londra aşkı.' },
+
+      // === YABANCI KOMEDİ ===
+      { id: 'mv9', title: 'Palm Springs', genre: 'Komedi', year: 2020, isTurkish: false, desc: 'Aynı düğün gününde sıkışıp kalan iki kişinin aşırı eğlenceli ve romantik macerası.' },
+      { id: 'mv10', title: 'Game Night', genre: 'Komedi', year: 2018, isTurkish: false, desc: 'Oyun gecesi bir anda gerçek bir gizeme dönüşünce kahkaha garantili aksiyon komedi.' },
+      { id: 'mv11', title: 'Crazy, Stupid, Love', genre: 'Komedi', year: 2011, isTurkish: false, desc: 'Aşk, aile ve şaşırtıcı tesadüflerle dolu çok keyifli komedi.' },
+      { id: 'mv12', title: 'The Hangover (Felekten Bir Gece)', genre: 'Komedi', year: 2009, isTurkish: false, desc: 'Las Vegas’ta kaybolan damadı arayan ekibin çılgın sabahı.' },
+      { id: 'mv13', title: 'The Grand Budapest Hotel', genre: 'Komedi', year: 2014, isTurkish: false, desc: 'Pastel renkler, masalsı görsellik ve zekice espriler.' },
+      { id: 'mv14', title: 'Superbad', genre: 'Komedi', year: 2007, isTurkish: false, desc: 'Mezuniyet öncesi unutulmaz bir gece yaşamak isteyen iki arkadaşın komedisi.' },
+      { id: 'mv15', title: '21 Jump Street', genre: 'Komedi', year: 2012, isTurkish: false, desc: 'Liseye gizli görevle dönen iki sakar polisin kahkaha dolu macerası.' },
+
+      // === YABANCI DRAM ===
+      { id: 'mv16', title: 'The Intouchables (Can Dostum)', genre: 'Dram', year: 2011, isTurkish: false, desc: 'Hem çok güldüren hem kalbi ısıtan gerçek bir dostluk hikayesi.' },
+      { id: 'mv17', title: 'Green Book (Yeşil Rehber)', genre: 'Dram', year: 2018, isTurkish: false, desc: 'İki zıt karakterin müzik ve dostluk dolu Oscar ödüllü yol filmi.' },
+      { id: 'mv18', title: 'Forrest Gump', genre: 'Dram', year: 1994, isTurkish: false, desc: 'Saf kalpli Forrest’ın hayat, aşk ve tarih dolu unutulmaz yolculuğu.' },
+      { id: 'mv19', title: 'The Pursuit of Happyness (Umudunu Kaybetme)', genre: 'Dram', year: 2006, isTurkish: false, desc: 'Asla pes etmeyen bir babanın ilham verici gerçek hikayesi.' },
+      { id: 'mv20', title: 'Dead Poets Society (Ölü Ozanlar Derneği)', genre: 'Dram', year: 1989, isTurkish: false, desc: 'Carpe Diem! Hayata bakış açınızı tazeleyen zamansız klasik.' },
+      { id: 'mv21', title: 'Whiplash', genre: 'Dram', year: 2014, isTurkish: false, desc: 'Genç bir baterist ile acımasız hocasının nefes kesen müzik düellosu.' },
+      { id: 'mv22', title: 'The Shawshank Redemption (Esaretin Bedeli)', genre: 'Dram', year: 1994, isTurkish: false, desc: 'Umut ve dostluk üzerine sinema tarihinin en yüksek puanlı başyapıtı.' },
+
+      // === YABANCI GERİLİM ===
+      { id: 'mv23', title: 'Knives Out (Bıçaklar Çekildi)', genre: 'Gerilim', year: 2019, isTurkish: false, desc: 'Birlikte “katil kim?” diye tahmin yürütmek için mükemmel dedektif filmi.' },
+      { id: 'mv24', title: 'Shutter Island (Zindan Adası)', genre: 'Gerilim', year: 2010, isTurkish: false, desc: 'Sonuna kadar tahmin yürüteceğiniz, bitince saatlerce konuşacağınız başyapıt.' },
+      { id: 'mv25', title: 'Parasite (Parazit)', genre: 'Gerilim', year: 2019, isTurkish: false, desc: 'Bir an bile sıkılmayacağınız, şok edici dönüşlerle dolu Oscar ödüllü şaheser.' },
+      { id: 'mv26', title: 'Gone Girl (Kayıp Kız)', genre: 'Gerilim', year: 2014, isTurkish: false, desc: 'Ters köşeleriyle ağzınızı açık bırakacak psikolojik gerilim.' },
+      { id: 'mv27', title: 'Se7en (Yedi)', genre: 'Gerilim', year: 1995, isTurkish: false, desc: 'Yağmurlu atmosferi ve unutulmaz finaliyle dedektif gerilimi klasiği.' },
+      { id: 'mv28', title: 'Prisoners (Tutsak)', genre: 'Gerilim', year: 2013, isTurkish: false, desc: 'İlk dakikadan son saniyeye kadar koltuğa kilitleyen gizem gerilim.' },
+      { id: 'mv29', title: 'Inception (Başlangıç)', genre: 'Gerilim', year: 2010, isTurkish: false, desc: 'Rüya içinde rüya! Zihin açıcı aksiyon-gerilim efsanesi.' },
+
+      // === YABANCI AKSİYON ===
+      { id: 'mv30', title: 'The Dark Knight (Kara Şövalye)', genre: 'Aksiyon', year: 2008, isTurkish: false, desc: 'Batman vs Joker — sinema tarihinin en iyi aksiyon filmlerinden.' },
+      { id: 'mv31', title: 'John Wick', genre: 'Aksiyon', year: 2014, isTurkish: false, desc: 'Stilize dövüş sahneleri ve durmayan temposuyla saf aksiyon.' },
+      { id: 'mv32', title: 'Top Gun: Maverick', genre: 'Aksiyon', year: 2022, isTurkish: false, desc: 'Adrenalin, gökyüzü ve nostaljinin kusursuz birleşimi.' },
+      { id: 'mv33', title: 'Mad Max: Fury Road', genre: 'Aksiyon', year: 2015, isTurkish: false, desc: 'Baştan sona nefes almadan izlenen görsel aksiyon şöleni.' },
+      { id: 'mv34', title: 'Ocean’s Eleven', genre: 'Aksiyon', year: 2001, isTurkish: false, desc: 'Zekice planlanmış, çok havalı ve eğlenceli Las Vegas soygun filmi.' },
+      { id: 'mv35', title: 'Gladiator (Gladyatör)', genre: 'Aksiyon', year: 2000, isTurkish: false, desc: 'Epik müzikler, destansı hikaye ve unutulmaz arenalar.' },
+
+      // === YABANCI ANİMASYON ===
+      { id: 'mv36', title: 'Spider-Man: Into the Spider-Verse', genre: 'Animasyon', year: 2018, isTurkish: false, desc: 'Görsel şölen, harika müzikler ve baştan sona tempo.' },
+      { id: 'mv37', title: 'Ratatouille', genre: 'Animasyon', year: 2007, isTurkish: false, desc: 'Kafede sıcak içecekle izlemek için en huzurlu, en tatlı animasyon.' },
+      { id: 'mv38', title: 'Howl’s Moving Castle', genre: 'Animasyon', year: 2004, isTurkish: false, desc: 'Studio Ghibli büyüsüyle sıcacık, romantik ve masalsı bir yolculuk.' },
+      { id: 'mv39', title: 'Spirited Away (Ruhların Kaçışı)', genre: 'Animasyon', year: 2001, isTurkish: false, desc: 'Hayal gücünün zirvesi, büyüleyici Miyazaki şaheseri.' },
+      { id: 'mv40', title: 'Up (Yukarı Bak)', genre: 'Animasyon', year: 2009, isTurkish: false, desc: 'İlk 10 dakikasında kalbi eriten, sonrasında bol kahkahalı macera.' },
+      { id: 'mv41', title: 'Coco', genre: 'Animasyon', year: 2017, isTurkish: false, desc: 'Renkler, müzik ve aile sevgisiyle dolu sıcacık Pixar harikası.' },
+      { id: 'mv42', title: 'Soul', genre: 'Animasyon', year: 2020, isTurkish: false, desc: 'Caz müziği ve hayatın küçük güzellikleri üzerine harika bir animasyon.' },
+      { id: 'mv43', title: 'WALL-E', genre: 'Animasyon', year: 2008, isTurkish: false, desc: 'Neredeyse hiç konuşmadan kalbinizi kazanan dünyanın en tatlı robot aşkı.' },
+
+      // === YABANCI BİLİM KURGU ===
+      { id: 'mv44', title: 'Interstellar (Yıldızlararası)', genre: 'Bilim Kurgu', year: 2014, isTurkish: false, desc: 'Uzay, zaman ve sevgi üzerine epik bir bilim kurgu deneyimi.' },
+      { id: 'mv45', title: 'The Martian (Marslı)', genre: 'Bilim Kurgu', year: 2015, isTurkish: false, desc: 'Hem zekice hem esprili hem de hiç sıkmayan hayatta kalma hikayesi.' },
+      { id: 'mv46', title: 'Dune', genre: 'Bilim Kurgu', year: 2021, isTurkish: false, desc: 'Dev görsellik, büyüleyici müzikler ve epik uzay destanı.' },
+      { id: 'mv47', title: 'Arrival (Geliş)', genre: 'Bilim Kurgu', year: 2016, isTurkish: false, desc: 'Dil, zaman ve insanlık üzerine çok etkileyici, zeki bilim kurgu.' },
+      { id: 'mv48', title: 'The Matrix', genre: 'Bilim Kurgu', year: 1999, isTurkish: false, desc: 'Kırmızı hap mı mavi hap mı? Bilim kurgunun efsanesi.' },
+      { id: 'mv49', title: 'Everything Everywhere All at Once', genre: 'Bilim Kurgu', year: 2022, isTurkish: false, desc: 'Çoklu evrenlerde çılgın, komik ve beklenmedik derecede duygusal macera.' }
+    ];
+
+    const WHEEL_PALETTE = [
+      '#FF5678', '#7C5CFF', '#FF8E53', '#10B981',
+      '#F59E0B', '#EC4899', '#3B82F6', '#14B8A6',
+      '#F43F5E', '#8B5CF6', '#FB7185', '#06B6D4'
+    ];
+
+    function clone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('havva_berat_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            pin: typeof parsed.pin === 'string' && /^\d{4}$/.test(parsed.pin) ? parsed.pin : '1234',
+            sound: parsed.sound ?? true,
+            foods: Array.isArray(parsed.foods) && parsed.foods.length ? parsed.foods : clone(FACTORY_FOODS),
+            activities: Array.isArray(parsed.activities) && parsed.activities.length ? parsed.activities : clone(FACTORY_ACTIVITIES),
+            scores: parsed.scores || { havva: 0, berat: 0 },
+            cards: Array.isArray(parsed.cards) && parsed.cards.length ? parsed.cards : clone(FACTORY_CARDS),
+            movies: Array.isArray(parsed.movies) && parsed.movies.length ? parsed.movies : clone(FACTORY_MOVIES),
+            watchlist: Array.isArray(parsed.watchlist) ? parsed.watchlist : [],
+            memories: Array.isArray(parsed.memories) ? parsed.memories : [],
+            customDefaults: parsed.customDefaults || { foods: null, activities: null, cards: null, movies: null }
+          };
+        }
+      } catch (e) {
+        console.warn('State yüklenemedi:', e);
+      }
+      return {
+        pin: '1234',
+        sound: true,
+        foods: clone(FACTORY_FOODS),
+        activities: clone(FACTORY_ACTIVITIES),
+        scores: { havva: 0, berat: 0 },
+        cards: clone(FACTORY_CARDS),
+        movies: clone(FACTORY_MOVIES),
+        watchlist: [],
+        memories: [],
+        customDefaults: { foods: null, activities: null, cards: null, movies: null }
+      };
+    }
+
+    let state = loadState();
+
+    function sanitizeMemoryForCloud(mem) {
+      const photos = Array.isArray(mem.photos)
+        ? mem.photos.filter(Boolean).slice(0, 8)
+        : (mem.photo ? [mem.photo] : []);
+      return {
+        id: String(mem.id || ('m_' + Date.now())).slice(0, 100),
+        emoji: String(mem.emoji || '💖').slice(0, 16),
+        title: String(mem.title || 'Anı').slice(0, 120),
+        date: String(mem.date || '').slice(0, 20),
+        note: String(mem.note || '').slice(0, 2000),
+        photos,
+        addedBy: mem.addedBy === 'Havva' ? 'Havva' : 'Berat',
+        createdAt: mem.createdAt ? Number(mem.createdAt) : Date.now(),
+        updatedAt: mem.updatedAt ? Number(mem.updatedAt) : null
+      };
+    }
+
+    // ==============================
+    // WHO ADDED (HAVVA / BERAT) HELPERS
+    // ==============================
+    const WHO_STORAGE_KEY = 'havva_berat_last_who';
+    let lastSelectedWho = (localStorage.getItem(WHO_STORAGE_KEY) === 'Havva') ? 'Havva' : 'Berat';
+
+    function whoBadgeHtml(who) {
+      const isHavva = who === 'Havva';
+      return `<span class="who-badge ${isHavva ? 'havva' : 'berat'}">${isHavva ? '💖 Havva' : '💙 Berat'}</span>`;
+    }
+
+    function setPickerWho(pickerName, person) {
+      const val = person === 'Havva' ? 'Havva' : 'Berat';
+      const el = document.querySelector(`.who-picker[data-who-picker="${pickerName}"]`);
+      if (!el) return;
+      el.querySelectorAll('.who-opt').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.who === val);
+      });
+    }
+
+    function getPickerWho(pickerName) {
+      const el = document.querySelector(`.who-picker[data-who-picker="${pickerName}"]`);
+      const active = el ? el.querySelector('.who-opt.active') : null;
+      return active && active.dataset.who === 'Havva' ? 'Havva' : 'Berat';
+    }
+
+    function syncAllWhoPickers(person) {
+      document.querySelectorAll('.who-picker').forEach(el => {
+        el.querySelectorAll('.who-opt').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.who === person);
+        });
+      });
+    }
+
+    document.querySelectorAll('.who-picker').forEach(picker => {
+      picker.querySelectorAll('.who-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const who = btn.dataset.who === 'Havva' ? 'Havva' : 'Berat';
+          lastSelectedWho = who;
+          try { localStorage.setItem(WHO_STORAGE_KEY, who); } catch {}
+          // Update this picker immediately
+          picker.querySelectorAll('.who-opt').forEach(b => b.classList.toggle('active', b === btn));
+        });
+      });
+    });
+    syncAllWhoPickers(lastSelectedWho);
+
+    async function saveMemoryToCloud(mem) {
+      if (!db || !mem || !mem.id) return;
+      try {
+        setSyncBadge('🟡', 'Kaydediliyor');
+        await setDoc(doc(db, 'memories', String(mem.id)), sanitizeMemoryForCloud(mem));
+        setSyncBadge('🟢', 'Canlı');
+      } catch (err) {
+        console.warn('Anı buluta yazılamadı:', err);
+        setSyncBadge('🔴', 'Hata');
+        showToast('Anı buluta kaydedilemedi, interneti kontrol edin!');
+      }
+    }
+
+    async function deleteMemoryFromCloud(memId) {
+      if (!db || !memId) return;
+      try {
+        setSyncBadge('🟡', 'Siliniyor');
+        await deleteDoc(doc(db, 'memories', String(memId)));
+        setSyncBadge('🟢', 'Canlı');
+      } catch (err) {
+        console.warn('Anı buluttan silinemedi:', err);
+      }
+    }
+
+    function buildCloudPayload(ts) {
+      return {
+        pin: typeof state.pin === 'string' && /^\d{4}$/.test(state.pin) ? state.pin : '1234',
+        foods: Array.isArray(state.foods) ? state.foods.slice(0, 150) : clone(FACTORY_FOODS),
+        activities: Array.isArray(state.activities) ? state.activities.slice(0, 150) : clone(FACTORY_ACTIVITIES),
+        scores: {
+          havva: Math.max(0, Math.floor(Number(state.scores?.havva) || 0)),
+          berat: Math.max(0, Math.floor(Number(state.scores?.berat) || 0))
+        },
+        cards: Array.isArray(state.cards) ? state.cards.slice(0, 150) : clone(FACTORY_CARDS),
+        movies: Array.isArray(state.movies) ? state.movies.slice(0, 150) : clone(FACTORY_MOVIES),
+        watchlist: Array.isArray(state.watchlist) ? state.watchlist.slice(0, 150) : [],
+        // Memories now live in their own /memories/{id} collection (1 MB per memory, 1 GB total!)
+        memories: [],
+        customDefaults: {
+          foods: state.customDefaults?.foods || null,
+          activities: state.customDefaults?.activities || null,
+          cards: state.customDefaults?.cards || null,
+          movies: state.customDefaults?.movies || null
+        },
+        updatedAt: ts
+      };
+    }
+
+    function pushToCloud() {
+      if (!stateDocRef || !cloudReady) return;
+      clearTimeout(syncDebounceTimer);
+      syncDebounceTimer = setTimeout(async () => {
+        try {
+          const ts = Date.now();
+          lastLocalWriteAt = ts;
+          setSyncBadge('🟡', 'Kaydediliyor');
+          await setDoc(stateDocRef, buildCloudPayload(ts));
+          setSyncBadge('🟢', 'Canlı');
+        } catch (err) {
+          console.warn('Buluta yazılamadı:', err);
+          setSyncBadge('🔴', 'Çevrimdışı');
+        }
+      }, 220);
+    }
+
+    function saveState(skipCloud = false) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, memories: [] }));
+      } catch (e) {
+        console.warn('Yerel önbellek atlandı:', e);
+      }
+      if (!skipCloud) pushToCloud();
+    }
+
+    function getDefaultFor(key) {
+      if (state.customDefaults && Array.isArray(state.customDefaults[key]) && state.customDefaults[key].length) {
+        return clone(state.customDefaults[key]);
+      }
+      if (key === 'foods') return clone(FACTORY_FOODS);
+      if (key === 'activities') return clone(FACTORY_ACTIVITIES);
+      if (key === 'cards') return clone(FACTORY_CARDS);
+      if (key === 'movies') return clone(FACTORY_MOVIES);
+      return [];
+    }
+
+    // ==============================
+    // SOUND ENGINE
+    // ==============================
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTick() {
+      if (!state.sound) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(680, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.035);
+      gain.gain.setValueAtTime(0.11, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.045);
+    }
+
+    function playWinChime() {
+      if (!state.sound) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const start = ctx.currentTime + i * 0.085;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.13, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.38);
+      });
+    }
+
+    function updateSoundUI() {
+      document.getElementById('sound-icon').textContent = state.sound ? '🔊' : '🔇';
+      document.getElementById('sound-label').textContent = state.sound ? 'Ses Açık' : 'Sessiz';
+    }
+
+    document.getElementById('sound-toggle').addEventListener('click', () => {
+      state.sound = !state.sound;
+      saveState();
+      updateSoundUI();
+      if (state.sound) playTick();
+    });
+    updateSoundUI();
+
+    // ==============================
+    // TOAST & CONFETTI
+    // ==============================
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const cCtx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeConfetti);
+    resizeConfetti();
+
+    function fireConfetti() {
+      const colors = ['#ff5678', '#7c5cff', '#f59e0b', '#10b981', '#3b82f6', '#ec4899'];
+      for (let i = 0; i < 110; i++) {
+        confettiParticles.push({
+          x: window.innerWidth / 2 + (Math.random() - 0.5) * 160,
+          y: window.innerHeight * 0.42,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 1.15) * 14,
+          size: Math.random() * 7 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rot: Math.random() * Math.PI * 2,
+          vrot: (Math.random() - 0.5) * 0.25,
+          life: 1
+        });
+      }
+      if (!confettiAnimId) animateConfetti();
+    }
+
+    function animateConfetti() {
+      cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.28;
+        p.rot += p.vrot;
+        p.life -= 0.012;
+        cCtx.save();
+        cCtx.globalAlpha = Math.max(0, p.life);
+        cCtx.translate(p.x, p.y);
+        cCtx.rotate(p.rot);
+        cCtx.fillStyle = p.color;
+        cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+        cCtx.restore();
+      });
+      confettiParticles = confettiParticles.filter(p => p.life > 0 && p.y < confettiCanvas.height + 30);
+      if (confettiParticles.length > 0) {
+        confettiAnimId = requestAnimationFrame(animateConfetti);
+      } else {
+        cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confettiAnimId = null;
+      }
+    }
+
+    // ==============================
+    // TAB NAVIGATION
+    // ==============================
+    function switchTab(tabId) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('panel-' + tabId);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      if (tabId === 'food') foodWheel.draw();
+      if (tabId === 'activity') activityWheel.draw();
+    }
+
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // ==============================
+    // WHEEL ENGINE
+    // ==============================
+    class SpinWheel {
+      constructor({ key, canvasId, pointerId, listId, badgeId, spinBtnId, centerBtnId, shuffleBtnId, resetBtnId, formId, inputId, emoji, modalLabel }) {
+        this.key = key;
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.pointer = document.getElementById(pointerId);
+        this.listEl = document.getElementById(listId);
+        this.badgeEl = document.getElementById(badgeId);
+        this.spinBtn = document.getElementById(spinBtnId);
+        this.centerBtn = document.getElementById(centerBtnId);
+        this.shuffleBtn = document.getElementById(shuffleBtnId);
+        this.resetBtn = document.getElementById(resetBtnId);
+        this.form = document.getElementById(formId);
+        this.input = document.getElementById(inputId);
+        this.emoji = emoji;
+        this.modalLabel = modalLabel;
+
+        this.rotation = 0;
+        this.spinning = false;
+
+        this.bindEvents();
+        this.renderList();
+        this.draw();
+      }
+
+      getItems() { return state[this.key]; }
+      getActiveItems() { return this.getItems().filter(i => i.active); }
+
+      bindEvents() {
+        this.spinBtn.addEventListener('click', () => this.spin());
+        this.centerBtn.addEventListener('click', () => this.spin());
+
+        this.shuffleBtn.addEventListener('click', () => {
+          if (this.spinning) return;
+          const arr = this.getItems();
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+          saveState();
+          this.renderList();
+          this.draw();
+          showToast('Liste karıştırıldı 🔀');
+        });
+
+        this.resetBtn.addEventListener('click', () => {
+          if (this.spinning) return;
+          state[this.key] = getDefaultFor(this.key);
+          saveState();
+          this.renderList();
+          this.draw();
+          showToast('Varsayılan liste geri yüklendi ↺');
+        });
+
+        this.form.addEventListener('submit', e => {
+          e.preventDefault();
+          const val = this.input.value.trim();
+          if (!val) return;
+          const pickerKey = this.key === 'foods' ? 'food' : 'activity';
+          const addedBy = getPickerWho(pickerKey);
+          this.getItems().unshift({ id: this.key + '_' + Date.now(), text: val, active: true, addedBy });
+          this.input.value = '';
+          saveState();
+          this.renderList();
+          this.draw();
+          showToast(`Çarka eklendi (${addedBy}) ✨`);
+        });
+      }
+
+      renderList() {
+        const items = this.getItems();
+        const activeCount = items.filter(i => i.active).length;
+        this.badgeEl.textContent = `${activeCount} aktif`;
+
+        this.listEl.innerHTML = '';
+        items.forEach((item, idx) => {
+          const row = document.createElement('div');
+          row.className = 'item-row' + (item.active ? '' : ' inactive');
+          const color = WHEEL_PALETTE[idx % WHEEL_PALETTE.length];
+          row.innerHTML = `
+            <div class="item-left" title="Aktif/Pasif yap">
+              <span class="item-dot" style="background:${color}"></span>
+              <span class="item-text"></span>
+              ${item.addedBy ? whoBadgeHtml(item.addedBy) : ''}
+            </div>
+            <div class="item-actions">
+              <button type="button" class="tiny-btn toggle-btn" title="${item.active ? 'Gizle' : 'Göster'}">${item.active ? '👁️' : '🚫'}</button>
+              <button type="button" class="tiny-btn del-btn" title="Sil">✕</button>
+            </div>
+          `;
+          row.querySelector('.item-text').textContent = item.text;
+
+          const toggleFn = () => {
+            if (this.spinning) return;
+            item.active = !item.active;
+            saveState();
+            this.renderList();
+            this.draw();
+          };
+
+          row.querySelector('.item-left').addEventListener('click', toggleFn);
+          row.querySelector('.toggle-btn').addEventListener('click', toggleFn);
+          row.querySelector('.del-btn').addEventListener('click', () => {
+            if (this.spinning) return;
+            state[this.key] = items.filter(x => x.id !== item.id);
+            saveState();
+            this.renderList();
+            this.draw();
+          });
+
+          this.listEl.appendChild(row);
+        });
+      }
+
+      draw() {
+        const ctx = this.ctx;
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const r = w / 2 - 6;
+
+        ctx.clearRect(0, 0, w, h);
+        const active = this.getActiveItems();
+        if (active.length === 0) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fillStyle = '#f3e8ff';
+          ctx.fill();
+          ctx.fillStyle = '#6c5d78';
+          ctx.font = '700 20px "Plus Jakarta Sans", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('En az 1 seçenek ekle!', cx, cy);
+          return;
+        }
+
+        const sliceAngle = (Math.PI * 2) / active.length;
+        active.forEach((item, i) => {
+          const start = this.rotation + i * sliceAngle;
+          const end = start + sliceAngle;
+
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, r, start, end);
+          ctx.closePath();
+          ctx.fillStyle = WHEEL_PALETTE[i % WHEEL_PALETTE.length];
+          ctx.fill();
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+          ctx.stroke();
+
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(start + sliceAngle / 2);
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#ffffff';
+          const fontSize = active.length > 10 ? 15 : active.length > 7 ? 17 : 19;
+          ctx.font = `800 ${fontSize}px "Plus Jakarta Sans", sans-serif`;
+          ctx.shadowColor = 'rgba(0,0,0,0.22)';
+          ctx.shadowBlur = 4;
+
+          let label = item.text;
+          const maxLen = active.length > 9 ? 18 : 22;
+          if (label.length > maxLen) label = label.slice(0, maxLen - 1) + '…';
+          ctx.fillText(label, r - 20, 0);
+          ctx.restore();
+        });
+      }
+
+      spin() {
+        if (this.spinning) return;
+        const active = this.getActiveItems();
+        if (active.length < 2) {
+          showToast('Çevirmek için en az 2 aktif seçenek olmalı!');
+          return;
+        }
+
+        this.spinning = true;
+        this.spinBtn.disabled = true;
+        this.centerBtn.disabled = true;
+
+        const sliceAngle = (Math.PI * 2) / active.length;
+        const startRot = this.rotation;
+        const targetRot = startRot + (5 + Math.random() * 3) * Math.PI * 2 + Math.random() * Math.PI * 2;
+        const duration = 4300;
+        const startTime = performance.now();
+        let lastSliceIndex = -1;
+
+        const step = now => {
+          const t = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 4);
+          this.rotation = startRot + (targetRot - startRot) * eased;
+          this.draw();
+
+          const pointerAngle = ((-Math.PI / 2 - this.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          const currentIndex = Math.floor(pointerAngle / sliceAngle) % active.length;
+          if (currentIndex !== lastSliceIndex) {
+            lastSliceIndex = currentIndex;
+            playTick();
+            this.pointer.classList.add('tick');
+            setTimeout(() => this.pointer.classList.remove('tick'), 65);
+          }
+
+          if (t < 1) {
+            requestAnimationFrame(step);
+          } else {
+            this.rotation = this.rotation % (Math.PI * 2);
+            this.spinning = false;
+            this.spinBtn.disabled = false;
+            this.centerBtn.disabled = false;
+
+            const finalAngle = ((-Math.PI / 2 - this.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            const winner = active[Math.floor(finalAngle / sliceAngle) % active.length];
+
+            playWinChime();
+            fireConfetti();
+            openResultModal({ wheel: this, winnerText: winner.text, badge: this.emoji, label: this.modalLabel });
+          }
+        };
+        requestAnimationFrame(step);
+      }
+    }
+
+    const foodWheel = new SpinWheel({
+      key: 'foods', canvasId: 'food-canvas', pointerId: 'food-pointer', listId: 'food-list',
+      badgeId: 'food-count-badge', spinBtnId: 'food-spin-btn', centerBtnId: 'food-spin-center',
+      shuffleBtnId: 'food-shuffle-btn', resetBtnId: 'food-reset-btn', formId: 'food-add-form',
+      inputId: 'food-input', emoji: '🍕', modalLabel: 'Bugün Yiyoruz!'
+    });
+
+    const activityWheel = new SpinWheel({
+      key: 'activities', canvasId: 'activity-canvas', pointerId: 'activity-pointer', listId: 'activity-list',
+      badgeId: 'activity-count-badge', spinBtnId: 'activity-spin-btn', centerBtnId: 'activity-spin-center',
+      shuffleBtnId: 'activity-shuffle-btn', resetBtnId: 'activity-reset-btn', formId: 'activity-add-form',
+      inputId: 'activity-input', emoji: '🎡', modalLabel: 'Bugünün Planı Belli Oldu!'
+    });
+
+    // ==============================
+    // RESULT MODAL
+    // ==============================
+    let currentModalCtx = null;
+    const modalBackdrop = document.getElementById('result-modal');
+
+    function openResultModal(ctx) {
+      currentModalCtx = ctx;
+      document.getElementById('modal-badge').textContent = ctx.badge;
+      document.getElementById('modal-label').textContent = ctx.label;
+      document.getElementById('modal-winner').textContent = ctx.winnerText;
+      document.getElementById('modal-sub').textContent = 'Havva & Berat için şans çarkı konuştu ✨';
+      modalBackdrop.classList.add('open');
+    }
+
+    function closeResultModal() { modalBackdrop.classList.remove('open'); }
+    document.getElementById('modal-close').addEventListener('click', closeResultModal);
+    modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeResultModal(); });
+    document.getElementById('modal-respin').addEventListener('click', () => {
+      const wheel = currentModalCtx?.wheel;
+      closeResultModal();
+      if (wheel) wheel.spin();
+    });
+    document.getElementById('modal-save-memory').addEventListener('click', () => {
+      if (!currentModalCtx) return;
+      const snapshot = { ...currentModalCtx };
+      requirePin({
+        title: 'Anı Ekleme Onayı',
+        subtitle: 'Anı defterine kaydetmek için 4 haneli PIN girin',
+        onSuccess: () => {
+          const newMem = {
+            id: 'm_' + Date.now(),
+            emoji: snapshot.badge,
+            title: snapshot.winnerText,
+            date: new Date().toISOString().slice(0, 10),
+            note: 'Çarktan çıktı, hemen yapıyoruz! 💖',
+            photos: [],
+            addedBy: lastSelectedWho,
+            createdAt: Date.now(),
+            updatedAt: null
+          };
+          state.memories.unshift(newMem);
+          saveMemoryToCloud(newMem);
+          renderMemories();
+          closeResultModal();
+          showToast('Anı defterine eklendi 💖');
+        }
+      });
+    });
+
+    // ==============================
+    // COIN DECIDER
+    // ==============================
+    let selectedTopic = 'Filmi kim seçsin?';
+    let coinAngle = 0;
+    let coinFlipping = false;
+
+    const HAVVA_LINES = ['Havva kazandı! İtiraz kabul edilmiyor 💖', 'Kader Havva dedi, Berat hemen uygulasın 😄', 'Havva şanslı gününde! ✨'];
+    const BERAT_LINES = ['Berat kazandı! Bu sefer söz Berat’ta 💙', 'Yazı-tura Berat dedi, hile yok! 😄', 'Berat şanslı gününde! ✨'];
+
+    function renderScores() {
+      document.getElementById('score-havva').textContent = state.scores.havva;
+      document.getElementById('score-berat').textContent = state.scores.berat;
+    }
+    renderScores();
+
+    document.querySelectorAll('#decider-topics .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#decider-topics .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedTopic = chip.dataset.topic;
+        document.getElementById('custom-topic-input').value = '';
+      });
+    });
+
+    document.getElementById('flip-coin-btn').addEventListener('click', () => {
+      if (coinFlipping) return;
+      coinFlipping = true;
+      const activeTopic = document.getElementById('custom-topic-input').value.trim() || selectedTopic;
+      const isHavva = Math.random() < 0.5;
+      const targetMod = isHavva ? 0 : 180;
+      const diff = (targetMod - (coinAngle % 360) + 360) % 360;
+      coinAngle += 5 * 360 + diff;
+
+      document.getElementById('coin').style.transform = `rotateY(${coinAngle}deg)`;
+      document.getElementById('decider-result').textContent = `"${activeTopic}" için para havada... 🪙`;
+      playTick();
+
+      setTimeout(() => {
+        coinFlipping = false;
+        if (isHavva) {
+          state.scores.havva += 1;
+          document.getElementById('decider-result').textContent = `${activeTopic} → ${HAVVA_LINES[Math.floor(Math.random() * HAVVA_LINES.length)]}`;
+        } else {
+          state.scores.berat += 1;
+          document.getElementById('decider-result').textContent = `${activeTopic} → ${BERAT_LINES[Math.floor(Math.random() * BERAT_LINES.length)]}`;
+        }
+        saveState();
+        renderScores();
+        playWinChime();
+        fireConfetti();
+      }, 1600);
+    });
+
+    document.getElementById('reset-score-btn').addEventListener('click', () => {
+      state.scores = { havva: 0, berat: 0 };
+      saveState();
+      renderScores();
+      showToast('Skor sıfırlandı');
+    });
+
+    // ==============================
+    // COUPLE CARDS
+    // ==============================
+    let cardFilter = 'all';
+    let lastCardId = null;
+
+    function getFilteredCards() {
+      return cardFilter === 'all' ? state.cards : state.cards.filter(c => c.cat === cardFilter);
+    }
+
+    function renderCustomCards() {
+      const list = document.getElementById('custom-cards-list');
+      const custom = state.cards.filter(c => c.custom);
+      document.getElementById('card-count-badge').textContent = `${getFilteredCards().length} kart`;
+
+      if (!custom.length) {
+        list.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">Henüz özel kart eklemediniz. (Tüm kartları düzenlemek için Admin panelini kullanın.)</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      custom.forEach(card => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-left" style="cursor:default;">
+            <span>${card.cat === 'gorev' ? '🎯' : '💬'}</span>
+            <span class="item-text"></span>
+            ${whoBadgeHtml(card.addedBy || 'Berat')}
+          </div>
+          <button type="button" class="tiny-btn">✕</button>
+        `;
+        row.querySelector('.item-text').textContent = card.text;
+        row.querySelector('.tiny-btn').addEventListener('click', () => {
+          requirePin({
+            title: 'Kart Silme Onayı',
+            subtitle: 'Bu özel kartı silmek için 4 haneli PIN girin',
+            onSuccess: () => {
+              state.cards = state.cards.filter(x => x.id !== card.id);
+              saveState();
+              renderCustomCards();
+              showToast('Özel kart silindi');
+            }
+          });
+        });
+        list.appendChild(row);
+      });
+    }
+    renderCustomCards();
+
+    document.querySelectorAll('#card-filter-group .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#card-filter-group .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        cardFilter = chip.dataset.cat;
+        document.getElementById('card-count-badge').textContent = `${getFilteredCards().length} kart`;
+      });
+    });
+
+    function drawCard() {
+      const pool = getFilteredCards();
+      if (!pool.length) { showToast('Bu kategoride kart yok!'); return; }
+      let candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && candidate.id === lastCardId) {
+        candidate = pool[(pool.indexOf(candidate) + 1) % pool.length];
+      }
+      lastCardId = candidate.id;
+
+      const cardEl = document.getElementById('play-card');
+      const wasFlipped = cardEl.classList.contains('flipped');
+      const applyContent = () => {
+        const tag = document.getElementById('drawn-card-tag');
+        tag.textContent = candidate.cat === 'gorev' ? '🎯 Eğlenceli Görev' : '💬 Tatlı Soru';
+        tag.className = 'card-tag ' + candidate.cat;
+        document.getElementById('drawn-card-text').textContent = candidate.text;
+        cardEl.classList.add('flipped');
+        playTick();
+      };
+
+      if (wasFlipped) {
+        cardEl.classList.remove('flipped');
+        setTimeout(applyContent, 260);
+      } else {
+        applyContent();
+      }
+    }
+
+    document.getElementById('draw-card-btn').addEventListener('click', drawCard);
+    document.getElementById('play-card-scene').addEventListener('click', drawCard);
+
+    document.getElementById('card-add-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const cat = document.getElementById('card-cat-select').value;
+      const text = document.getElementById('card-text-input').value.trim();
+      const addedBy = getPickerWho('card');
+      if (!text) return;
+      requirePin({
+        title: 'Özel Kart Ekleme Onayı',
+        subtitle: 'Desteye yeni kart eklemek için 4 haneli PIN girin',
+        onSuccess: () => {
+          state.cards.unshift({ id: 'cc_' + Date.now(), cat, text, custom: true, addedBy });
+          document.getElementById('card-text-input').value = '';
+          saveState();
+          renderCustomCards();
+          showToast(`Özel kart eklendi (${addedBy}) 🃏`);
+        }
+      });
+    });
+
+    // ==============================
+    // MOVIES & WATCHLIST
+    // ==============================
+    let selectedGenre = 'Tümü';
+    let onlyTurkishMovies = false;
+    let lastSuggestedMovie = null;
+
+    function getFilteredMoviePool() {
+      if (selectedGenre === 'Bizim Listemiz') {
+        const unwatched = state.watchlist.filter(w => !w.watched);
+        const base = unwatched.length ? unwatched : state.watchlist;
+        return onlyTurkishMovies ? base.filter(w => w.isTurkish) : base;
+      }
+      let pool = selectedGenre === 'Tümü' ? state.movies : state.movies.filter(m => m.genre === selectedGenre);
+      if (onlyTurkishMovies) {
+        pool = pool.filter(m => m.isTurkish);
+      }
+      return pool;
+    }
+
+    function updateMovieBadges() {
+      const pool = getFilteredMoviePool();
+      const matchBadge = document.getElementById('movie-match-badge');
+      if (matchBadge) matchBadge.textContent = `${pool.length} film`;
+
+      const ourChip = document.getElementById('chip-our-list');
+      if (ourChip) ourChip.textContent = `💖 Bizim Listemiz (${state.watchlist.length})`;
+
+      const wlBadge = document.getElementById('watchlist-count-badge');
+      if (wlBadge) wlBadge.textContent = `${state.watchlist.length} film`;
+    }
+
+    document.querySelectorAll('#movie-genre-group .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#movie-genre-group .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedGenre = chip.dataset.genre;
+        updateMovieBadges();
+      });
+    });
+
+    const movieTrToggle = document.getElementById('movie-tr-toggle');
+    movieTrToggle.addEventListener('click', () => {
+      onlyTurkishMovies = !onlyTurkishMovies;
+      movieTrToggle.classList.toggle('active', onlyTurkishMovies);
+      movieTrToggle.textContent = onlyTurkishMovies
+        ? '🇹🇷 Sadece Türk Filmleri: AÇIK ✓'
+        : '🇹🇷 Sadece Türk Filmleri: Kapalı';
+      updateMovieBadges();
+      playTick();
+    });
+
+    document.getElementById('suggest-movie-btn').addEventListener('click', () => {
+      const pool = getFilteredMoviePool();
+      if (!pool.length) {
+        if (selectedGenre === 'Bizim Listemiz') {
+          showToast(onlyTurkishMovies ? 'Bizim Listemizde Türk filmi yok!' : 'Bizim Listemiz henüz boş! Sağdan film ekleyebilirsin.');
+        } else {
+          showToast('Bu filtrede film bulunamadı!');
+        }
+        return;
+      }
+      let pick = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && lastSuggestedMovie && pick.title === lastSuggestedMovie.title) {
+        pick = pool[(pool.indexOf(pick) + 1) % pool.length];
+      }
+      lastSuggestedMovie = pick;
+
+      const box = document.getElementById('movie-spotlight');
+      box.innerHTML = `
+        <h3></h3>
+        <p></p>
+        <span class="movie-meta"></span>
+      `;
+      box.querySelector('h3').textContent = pick.title;
+
+      if (selectedGenre === 'Bizim Listemiz') {
+        const whoTxt = pick.addedBy === 'Havva' ? '💖 Havva ekledi' : '💙 Berat ekledi';
+        box.querySelector('p').textContent = pick.desc || 'Bizim Listemizden rastgele seçildi! Patlamış mısırları hazırlayın 🍿';
+        const trTag = pick.isTurkish ? ' • 🇹🇷 Türk' : '';
+        const gTag = pick.genre && pick.genre !== 'Genel' ? ` • ${pick.genre}` : '';
+        box.querySelector('.movie-meta').textContent = `💖 Bizim Listemizden${gTag}${trTag} • ${whoTxt}`;
+        document.getElementById('add-suggested-watchlist-btn').style.display = 'none';
+        playWinChime();
+        fireConfetti();
+      } else {
+        box.querySelector('p').textContent = pick.desc || '';
+        const trTag = pick.isTurkish ? ' • 🇹🇷 Türk Filmi' : '';
+        box.querySelector('.movie-meta').textContent = `🎭 ${pick.genre}${pick.year ? ' • ' + pick.year : ''}${trTag}`;
+        document.getElementById('add-suggested-watchlist-btn').style.display = 'inline-flex';
+        playTick();
+      }
+    });
+
+    document.getElementById('add-suggested-watchlist-btn').addEventListener('click', () => {
+      if (!lastSuggestedMovie) return;
+      const movieSnap = { ...lastSuggestedMovie };
+      if (state.watchlist.some(w => w.title.toLowerCase() === movieSnap.title.toLowerCase())) {
+        showToast('Bu film zaten Bizim Listemizde!');
+        return;
+      }
+      requirePin({
+        title: 'Listemize Ekleme Onayı',
+        subtitle: 'Bu filmi Bizim Listemize eklemek için 4 haneli PIN girin',
+        onSuccess: () => {
+          state.watchlist.unshift({
+            id: 'w_' + Date.now(),
+            title: movieSnap.title,
+            genre: movieSnap.genre || 'Genel',
+            isTurkish: Boolean(movieSnap.isTurkish),
+            desc: movieSnap.desc || '',
+            addedBy: getPickerWho('watchlist'),
+            watched: false
+          });
+          saveState();
+          renderWatchlist();
+          showToast('💖 Bizim Listemize eklendi!');
+        }
+      });
+    });
+
+    let editingWatchlistId = null;
+
+    function startEditWatchlistItem(item) {
+      editingWatchlistId = item.id;
+      document.getElementById('watchlist-input').value = item.title || '';
+      document.getElementById('watchlist-genre-select').value = item.genre || 'Genel';
+      document.getElementById('watchlist-tr-check').checked = Boolean(item.isTurkish);
+      document.getElementById('watchlist-desc-input').value = item.desc || '';
+      setPickerWho('watchlist', item.addedBy || 'Berat');
+
+      document.getElementById('watchlist-form-title').textContent = '✏️ Filmi Düzenle';
+      document.getElementById('watchlist-form-sub').textContent = 'Kim ekledi, tür veya açıklamayı değiştirip PIN ile kaydet.';
+      document.getElementById('watchlist-submit-btn').textContent = '🔐 PIN ile Filmi Güncelle';
+      document.getElementById('watchlist-cancel-edit-btn').style.display = 'inline-flex';
+      document.getElementById('watchlist-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEditWatchlistItem() {
+      editingWatchlistId = null;
+      document.getElementById('watchlist-input').value = '';
+      document.getElementById('watchlist-genre-select').value = 'Genel';
+      document.getElementById('watchlist-tr-check').checked = false;
+      document.getElementById('watchlist-desc-input').value = '';
+      setPickerWho('watchlist', lastSelectedWho);
+
+      document.getElementById('watchlist-form-title').textContent = '➕ Bizim Listemize Ekle';
+      document.getElementById('watchlist-form-sub').innerHTML = 'Eklediğiniz film ve diziler direkt <strong>💖 Bizim Listemiz</strong> seçeneğinin içine gider.';
+      document.getElementById('watchlist-submit-btn').textContent = '🔐 PIN ile Listemize Gönder';
+      document.getElementById('watchlist-cancel-edit-btn').style.display = 'none';
+    }
+
+    document.getElementById('watchlist-cancel-edit-btn').addEventListener('click', cancelEditWatchlistItem);
+
+    function renderWatchlist() {
+      updateMovieBadges();
+      const el = document.getElementById('watchlist-items');
+      if (!state.watchlist.length) {
+        el.innerHTML = '<div style="font-size:0.84rem;color:var(--muted);padding:10px 0;">Henüz Bizim Listemize film eklemediniz.</div>';
+        return;
+      }
+      el.innerHTML = '';
+      state.watchlist.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'item-row' + (item.watched ? ' inactive' : '');
+        row.innerHTML = `
+          <div class="item-left" style="flex-direction:column;align-items:flex-start;gap:2px;">
+            <div style="display:flex;align-items:center;gap:8px;width:100%;">
+              <span>${item.watched ? '✅' : (item.isTurkish ? '🇹🇷' : '🍿')}</span>
+              <span class="item-text"></span>
+              ${whoBadgeHtml(item.addedBy || 'Berat')}
+            </div>
+            <div class="wl-desc-preview" style="font-size:0.75rem;color:var(--muted);padding-left:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></div>
+          </div>
+          <div class="item-actions">
+            <button type="button" class="tiny-btn edit-wl-btn" title="PIN ile Düzenle">✏️</button>
+            <button type="button" class="tiny-btn del-btn" title="PIN ile Sil">✕</button>
+          </div>
+        `;
+        row.querySelector('.item-text').textContent = item.title;
+        const descPrev = row.querySelector('.wl-desc-preview');
+        if (item.desc) descPrev.textContent = item.desc; else descPrev.remove();
+
+        row.querySelector('.item-left').addEventListener('click', () => {
+          item.watched = !item.watched;
+          saveState();
+          renderWatchlist();
+        });
+        row.querySelector('.edit-wl-btn').addEventListener('click', () => startEditWatchlistItem(item));
+        row.querySelector('.del-btn').addEventListener('click', () => {
+          requirePin({
+            title: 'Listeden Silme Onayı',
+            subtitle: 'Bu filmi Bizim Listemizden silmek için 4 haneli PIN girin',
+            onSuccess: () => {
+              if (editingWatchlistId === item.id) cancelEditWatchlistItem();
+              state.watchlist = state.watchlist.filter(x => x.id !== item.id);
+              saveState();
+              renderWatchlist();
+              showToast('Listemizden silindi');
+            }
+          });
+        });
+        el.appendChild(row);
+      });
+    }
+    renderWatchlist();
+
+    const toggleWlBtn = document.getElementById('toggle-watchlist-manage');
+    toggleWlBtn.addEventListener('click', () => {
+      const box = document.getElementById('watchlist-items');
+      const open = box.style.display !== 'none';
+      box.style.display = open ? 'none' : 'flex';
+      toggleWlBtn.textContent = open ? '👁️ Listeyi Yönet' : '🙈 Listeyi Gizle';
+    });
+
+    document.getElementById('watchlist-add-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('watchlist-input').value.trim();
+      if (!title) return;
+      const genre = document.getElementById('watchlist-genre-select').value || 'Genel';
+      const isTurkish = document.getElementById('watchlist-tr-check').checked;
+      const desc = document.getElementById('watchlist-desc-input').value.trim();
+      const addedBy = getPickerWho('watchlist');
+      const targetEditId = editingWatchlistId;
+
+      if (targetEditId) {
+        requirePin({
+          title: 'Film Düzenleme Onayı',
+          subtitle: 'Değişiklikleri kaydetmek için 4 haneli PIN girin',
+          onSuccess: () => {
+            const target = state.watchlist.find(x => x.id === targetEditId);
+            if (target) {
+              target.title = title;
+              target.genre = genre;
+              target.isTurkish = isTurkish;
+              target.desc = desc;
+              target.addedBy = addedBy;
+            }
+            cancelEditWatchlistItem();
+            saveState();
+            renderWatchlist();
+            showToast('Film güncellendi ✏️');
+          }
+        });
+      } else {
+        if (state.watchlist.some(w => w.title.toLowerCase() === title.toLowerCase())) {
+          showToast('Bu film zaten Bizim Listemizde!');
+          return;
+        }
+        requirePin({
+          title: 'Listemize Ekleme Onayı',
+          subtitle: 'Bu filmi Bizim Listemize eklemek için 4 haneli PIN girin',
+          onSuccess: () => {
+            state.watchlist.unshift({ id: 'w_' + Date.now(), title, genre, isTurkish, desc, addedBy, watched: false });
+            cancelEditWatchlistItem();
+            saveState();
+            renderWatchlist();
+            showToast(`💖 Bizim Listemize eklendi (${addedBy})! (Toplam ${state.watchlist.length})`);
+          }
+        });
+      }
+    });
+
+    // ==============================
+    // MEMORIES (TIMELINE + MULTI-PHOTO + PIN)
+    // ==============================
+    let selectedMemoryEmoji = '💖';
+    let pendingMemoryPhotos = [];
+    const MAX_MEMORY_PHOTOS = 8;
+    const TR_MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+
+    function getMemoryPhotos(mem) {
+      if (Array.isArray(mem.photos) && mem.photos.length) return mem.photos.filter(Boolean);
+      if (mem.photo) return [mem.photo];
+      return [];
+    }
+
+    document.getElementById('memory-date-input').value = new Date().toISOString().slice(0, 10);
+
+    document.querySelectorAll('#memory-emoji-picker .emoji-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#memory-emoji-picker .emoji-opt').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedMemoryEmoji = btn.dataset.emoji;
+      });
+    });
+
+    // Lightbox Gallery
+    const photoLightbox = document.getElementById('photo-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+    const lightboxCounter = document.getElementById('lightbox-counter');
+    let lightboxList = [];
+    let lightboxIdx = 0;
+
+    function updateLightboxView() {
+      if (!lightboxList.length) return;
+      lightboxImg.src = lightboxList[lightboxIdx];
+      const multi = lightboxList.length > 1;
+      lightboxPrev.style.display = multi ? 'inline-flex' : 'none';
+      lightboxNext.style.display = multi ? 'inline-flex' : 'none';
+      lightboxCounter.style.display = multi ? 'inline-block' : 'none';
+      lightboxCounter.textContent = `${lightboxIdx + 1} / ${lightboxList.length}`;
+    }
+
+    function openLightbox(photos, startIndex = 0) {
+      lightboxList = Array.isArray(photos) ? photos : [photos];
+      lightboxIdx = Math.max(0, Math.min(startIndex, lightboxList.length - 1));
+      updateLightboxView();
+      photoLightbox.classList.add('open');
+    }
+
+    function closeLightbox() {
+      photoLightbox.classList.remove('open');
+      lightboxImg.src = '';
+      lightboxList = [];
+    }
+
+    lightboxPrev.addEventListener('click', () => {
+      if (lightboxList.length < 2) return;
+      lightboxIdx = (lightboxIdx - 1 + lightboxList.length) % lightboxList.length;
+      updateLightboxView();
+    });
+
+    lightboxNext.addEventListener('click', () => {
+      if (lightboxList.length < 2) return;
+      lightboxIdx = (lightboxIdx + 1) % lightboxList.length;
+      updateLightboxView();
+    });
+
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    photoLightbox.addEventListener('click', e => { if (e.target === photoLightbox) closeLightbox(); });
+
+    // Verunix HD Photo Upload (uploads/ klasörüne yüksek kalitede kaydeder, Firestore sadece linki tutar)
+    function resizeToHdBlob(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Dosya okunamadı'));
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('Geçersiz görsel'));
+          img.onload = () => {
+            const maxDim = 1600;
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob(
+              blob => (blob ? resolve(blob) : reject(new Error('Dönüştürülemedi'))),
+              'image/jpeg',
+              0.85
+            );
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadPhotoToCloudStorage(file) {
+      const blob = await resizeToHdBlob(file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: blob
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || !data.ok || !data.url) {
+        throw new Error((data && data.error) || 'Vercel Blob yükleme hatası');
+      }
+      return data.url;
+    }
+
+    async function deletePhotosFromCloudStorage(urls) {
+      const clean = (urls || []).filter(u => typeof u === 'string' && u.includes('blob.vercel-storage.com'));
+      if (!clean.length) return;
+      try {
+        await fetch('/api/upload?action=delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ urls: clean })
+        });
+      } catch (e) {
+        console.warn('Vercel Blob eski fotoğraf silinemedi:', e);
+      }
+    }
+
+    const memoryPhotoInput = document.getElementById('memory-photo-input');
+    const memoryPhotoPreviewGrid = document.getElementById('memory-photo-preview-grid');
+    const memoryPhotoLabelText = document.getElementById('memory-photo-label-text');
+
+    function renderPendingPhotoGrid() {
+      memoryPhotoPreviewGrid.innerHTML = '';
+      if (!pendingMemoryPhotos.length) {
+        memoryPhotoPreviewGrid.classList.remove('show');
+        memoryPhotoLabelText.textContent = `Fotoğraf Ekle (HD • Birden fazla seçilebilir, maks ${MAX_MEMORY_PHOTOS})`;
+        return;
+      }
+      memoryPhotoPreviewGrid.classList.add('show');
+      memoryPhotoLabelText.textContent =
+        pendingMemoryPhotos.length >= MAX_MEMORY_PHOTOS
+          ? `Maksimum ${MAX_MEMORY_PHOTOS} fotoğraf eklendi`
+          : `Daha Fazla Fotoğraf Ekle (${pendingMemoryPhotos.length}/${MAX_MEMORY_PHOTOS})`;
+
+      pendingMemoryPhotos.forEach((src, idx) => {
+        const tile = document.createElement('div');
+        tile.className = 'photo-preview-tile';
+        tile.innerHTML = `<img alt="Önizleme" /><button type="button" class="photo-preview-remove" title="Kaldır">✕</button>`;
+        tile.querySelector('img').src = src;
+        tile.querySelector('.photo-preview-remove').addEventListener('click', () => {
+          pendingMemoryPhotos.splice(idx, 1);
+          renderPendingPhotoGrid();
+        });
+        memoryPhotoPreviewGrid.appendChild(tile);
+      });
+    }
+
+    function clearPendingPhoto() {
+      pendingMemoryPhotos = [];
+      memoryPhotoInput.value = '';
+      renderPendingPhotoGrid();
+    }
+
+    memoryPhotoInput.addEventListener('change', async e => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      const remaining = MAX_MEMORY_PHOTOS - pendingMemoryPhotos.length;
+      if (remaining <= 0) {
+        showToast(`Bir anıya en fazla ${MAX_MEMORY_PHOTOS} fotoğraf ekleyebilirsin!`);
+        memoryPhotoInput.value = '';
+        return;
+      }
+      const toProcess = files.slice(0, remaining);
+      let uploadedCount = 0;
+      try {
+        for (let i = 0; i < toProcess.length; i++) {
+          memoryPhotoLabelText.textContent = `Vercel Blob'a yükleniyor (${i + 1}/${toProcess.length})...`;
+          const url = await uploadPhotoToCloudStorage(toProcess[i]);
+          pendingMemoryPhotos.push(url);
+          uploadedCount++;
+        }
+        if (files.length > remaining) {
+          showToast(`En fazla ${MAX_MEMORY_PHOTOS} fotoğraf eklenebilir, ilk ${remaining} tanesi yüklendi.`);
+        } else if (uploadedCount > 0) {
+          showToast(`${uploadedCount} HD fotoğraf yüklendi 📷`);
+        }
+      } catch (err) {
+        showToast(err.message || 'Fotoğraf sunucuya yüklenemedi!');
+      }
+      memoryPhotoInput.value = '';
+      renderPendingPhotoGrid();
+    });
+
+    function parseTimelineDate(iso) {
+      if (!iso) return { dayMonth: 'Tarihsiz', year: '' };
+      const p = iso.split('-');
+      if (p.length !== 3) return { dayMonth: iso, year: '' };
+      const monthIdx = Math.max(0, Math.min(11, parseInt(p[1], 10) - 1));
+      const day = parseInt(p[2], 10);
+      return {
+        dayMonth: `${day} ${TR_MONTHS[monthIdx] || p[1]}`,
+        year: p[0]
+      };
+    }
+
+    function formatTimestampTR(ms) {
+      if (!ms || isNaN(Number(ms))) return '';
+      const d = new Date(Number(ms));
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    let editingMemoryId = null;
+
+    function setSelectedMemoryEmoji(emoji) {
+      selectedMemoryEmoji = emoji || '💖';
+      document.querySelectorAll('#memory-emoji-picker .emoji-opt').forEach(b => {
+        b.classList.toggle('active', b.dataset.emoji === selectedMemoryEmoji);
+      });
+    }
+
+    const memoryFormCard = document.getElementById('memory-form-card');
+    const mobileComposerBar = document.getElementById('mobile-composer-bar');
+
+    if (mobileComposerBar) {
+      mobileComposerBar.addEventListener('click', () => {
+        const isOpen = memoryFormCard.classList.toggle('mobile-open');
+        if (isOpen) {
+          memoryFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    function startEditMemory(mem) {
+      editingMemoryId = mem.id;
+      setSelectedMemoryEmoji(mem.emoji || '💖');
+      setPickerWho('memory', mem.addedBy || 'Berat');
+      document.getElementById('memory-title-input').value = mem.title || '';
+      document.getElementById('memory-date-input').value = mem.date || new Date().toISOString().slice(0, 10);
+      document.getElementById('memory-note-input').value = mem.note || '';
+
+      pendingMemoryPhotos = [...getMemoryPhotos(mem)];
+      renderPendingPhotoGrid();
+
+      document.getElementById('memory-form-title').textContent = '✏️ Anıyı Düzenle';
+      document.getElementById('memory-form-sub').textContent = 'Değişiklikleri yapıp PIN ile güncelleyebilirsin.';
+      document.getElementById('memory-submit-btn').textContent = '🔐 PIN ile Güncelle';
+      document.getElementById('memory-cancel-edit-btn').style.display = 'inline-flex';
+      memoryFormCard.classList.add('mobile-open');
+      memoryFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEditMemory() {
+      editingMemoryId = null;
+      setSelectedMemoryEmoji('💖');
+      document.getElementById('memory-title-input').value = '';
+      document.getElementById('memory-date-input').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('memory-note-input').value = '';
+      clearPendingPhoto();
+      document.getElementById('memory-form-title').textContent = '📝 Yeni Anı Ekle';
+      document.getElementById('memory-form-sub').textContent = 'Yaptığınız planları küçük bir notla ölümsüzleştirin.';
+      document.getElementById('memory-submit-btn').textContent = '🔐 PIN ile Anılara Kaydet';
+      document.getElementById('memory-cancel-edit-btn').style.display = 'none';
+      memoryFormCard.classList.remove('mobile-open');
+    }
+
+    document.getElementById('memory-cancel-edit-btn').addEventListener('click', cancelEditMemory);
+
+    function renderMemories() {
+      const list = document.getElementById('memory-list');
+      document.getElementById('memory-count-badge').textContent = `${state.memories.length} anı`;
+
+      if (!state.memories.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:2.2rem;margin-bottom:8px;">💌</div>
+            <div style="font-weight:700;color:var(--ink);">Henüz paylaşılmış bir anı yok</div>
+            <div style="font-size:0.84rem;margin-top:4px;">Yukarıdan yeni anı paylaşabilir veya çarktan çıkan planları kaydedebilirsin.</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Sort chronologically (newest date on top, then newest createdAt)
+      const sorted = [...state.memories].sort((a, b) => {
+        const dCmp = (b.date || '').localeCompare(a.date || '');
+        if (dCmp !== 0) return dCmp;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      list.innerHTML = '';
+      sorted.forEach(mem => {
+        const { dayMonth, year } = parseTimelineDate(mem.date);
+        const fullDateLabel = year ? `${dayMonth} ${year}` : dayMonth;
+        const row = document.createElement('div');
+        row.className = 'timeline-row';
+        row.innerHTML = `
+          <div class="timeline-date-col">
+            <div class="timeline-day"></div>
+            <div class="timeline-year"></div>
+          </div>
+          <div class="timeline-rail">
+            <div class="timeline-dot"></div>
+          </div>
+          <article class="memory-item">
+            <div class="memory-post-header">
+              <div class="memory-post-author">
+                <div class="memory-emoji">${mem.emoji || '💖'}</div>
+                <div>
+                  <div class="memory-author-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span>${mem.addedBy === 'Havva' ? 'Havva' : 'Berat'}</span>
+                    ${whoBadgeHtml(mem.addedBy || 'Berat')}
+                  </div>
+                  <div class="memory-author-date"></div>
+                </div>
+              </div>
+              <div class="memory-card-actions">
+                <button type="button" class="tiny-btn edit-mem-btn" title="Düzenle">✏️</button>
+                <button type="button" class="tiny-btn del-mem-btn" title="PIN ile Sil">✕</button>
+              </div>
+            </div>
+            <div class="memory-media-slot"></div>
+            <div class="memory-post-body">
+              <div class="memory-title"></div>
+              <div class="memory-note"></div>
+            </div>
+          </article>
+        `;
+        row.querySelector('.timeline-day').textContent = dayMonth;
+        row.querySelector('.timeline-year').textContent = year;
+        row.querySelector('.memory-author-date').textContent = `📅 ${fullDateLabel}`;
+        row.querySelector('.memory-title').textContent = mem.title;
+        const noteEl = row.querySelector('.memory-note');
+        if (mem.note) noteEl.textContent = mem.note; else noteEl.remove();
+
+        // Instagram-style swipeable photo carousel
+        const mediaSlot = row.querySelector('.memory-media-slot');
+        const memPhotos = getMemoryPhotos(mem);
+        if (memPhotos.length) {
+          const wrap = document.createElement('div');
+          wrap.className = 'ig-carousel-wrap';
+
+          const track = document.createElement('div');
+          track.className = 'ig-carousel-track';
+
+          memPhotos.forEach((src, idx) => {
+            const slide = document.createElement('div');
+            slide.className = 'ig-slide';
+            const img = document.createElement('img');
+            img.src = src;
+            img.loading = 'lazy';
+            img.alt = mem.title || 'Anı fotoğrafı';
+            img.addEventListener('click', () => openLightbox(memPhotos, idx));
+            slide.appendChild(img);
+            track.appendChild(slide);
+          });
+
+          wrap.appendChild(track);
+          mediaSlot.appendChild(wrap);
+
+          if (memPhotos.length > 1) {
+            const pill = document.createElement('div');
+            pill.className = 'ig-count-pill';
+            pill.textContent = `1 / ${memPhotos.length}`;
+            wrap.appendChild(pill);
+
+            const dotsWrap = document.createElement('div');
+            dotsWrap.className = 'ig-dots';
+            const dotEls = memPhotos.map((_, idx) => {
+              const d = document.createElement('span');
+              d.className = 'ig-dot' + (idx === 0 ? ' active' : '');
+              dotsWrap.appendChild(d);
+              return d;
+            });
+            mediaSlot.appendChild(dotsWrap);
+
+            track.addEventListener('scroll', () => {
+              const w = track.clientWidth || 1;
+              const activeIdx = Math.max(0, Math.min(memPhotos.length - 1, Math.round(track.scrollLeft / w)));
+              pill.textContent = `${activeIdx + 1} / ${memPhotos.length}`;
+              dotEls.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+            }, { passive: true });
+          }
+        } else {
+          mediaSlot.remove();
+        }
+
+        // Ekleme ve düzenleme saatleri
+        const postBody = row.querySelector('.memory-post-body');
+        const createdStr = formatTimestampTR(mem.createdAt);
+        const updatedStr = formatTimestampTR(mem.updatedAt);
+        if (createdStr || updatedStr) {
+          const tsDiv = document.createElement('div');
+          tsDiv.className = 'memory-timestamps';
+          if (createdStr) {
+            const s1 = document.createElement('span');
+            s1.textContent = `🕒 Eklendi: ${createdStr}`;
+            tsDiv.appendChild(s1);
+          }
+          if (updatedStr) {
+            const s2 = document.createElement('span');
+            s2.textContent = `✏️ Düzenlendi: ${updatedStr}`;
+            tsDiv.appendChild(s2);
+          }
+          postBody.appendChild(tsDiv);
+        }
+
+        row.querySelector('.edit-mem-btn').addEventListener('click', () => startEditMemory(mem));
+
+        row.querySelector('.del-mem-btn').addEventListener('click', () => {
+          requirePin({
+            title: 'Anı Silme Onayı',
+            subtitle: 'Bu anıyı silmek için 4 haneli PIN girin',
+            onSuccess: () => {
+              if (editingMemoryId === mem.id) cancelEditMemory();
+              const photosToDelete = getMemoryPhotos(mem);
+              state.memories = state.memories.filter(x => x.id !== mem.id);
+              deleteMemoryFromCloud(mem.id);
+              deletePhotosFromCloudStorage(photosToDelete);
+              renderMemories();
+              showToast('Anı silindi');
+            }
+          });
+        });
+
+        list.appendChild(row);
+      });
+    }
+    renderMemories();
+
+    document.getElementById('memory-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('memory-title-input').value.trim();
+      if (!title) return;
+      const date = document.getElementById('memory-date-input').value || new Date().toISOString().slice(0, 10);
+      const note = document.getElementById('memory-note-input').value.trim();
+      const photos = [...pendingMemoryPhotos];
+      const emoji = selectedMemoryEmoji;
+      const addedBy = getPickerWho('memory');
+      const targetEditId = editingMemoryId;
+
+      if (targetEditId) {
+        requirePin({
+          title: 'Anı Düzenleme Onayı',
+          subtitle: 'Değişiklikleri kaydetmek için 4 haneli PIN girin',
+          onSuccess: () => {
+            const target = state.memories.find(x => x.id === targetEditId);
+            if (target) {
+              const oldPhotos = getMemoryPhotos(target);
+              const removedPhotos = oldPhotos.filter(u => !photos.includes(u));
+              if (removedPhotos.length) deletePhotosFromCloudStorage(removedPhotos);
+
+              target.emoji = emoji;
+              target.title = title;
+              target.date = date;
+              target.note = note;
+              target.photos = photos;
+              target.addedBy = addedBy;
+              delete target.photo;
+              target.updatedAt = Date.now();
+              if (!target.createdAt) target.createdAt = target.updatedAt;
+              saveMemoryToCloud(target);
+            }
+            cancelEditMemory();
+            renderMemories();
+            showToast('Anı güncellendi ✏️');
+          }
+        });
+      } else {
+        requirePin({
+          title: 'Anı Ekleme Onayı',
+          subtitle: 'Yeni anıyı kaydetmek için 4 haneli PIN girin',
+          onSuccess: () => {
+            const newMem = {
+              id: 'm_' + Date.now(),
+              emoji,
+              title,
+              date,
+              note,
+              photos,
+              addedBy,
+              createdAt: Date.now(),
+              updatedAt: null
+            };
+            state.memories.unshift(newMem);
+            cancelEditMemory();
+            saveMemoryToCloud(newMem);
+            renderMemories();
+            fireConfetti();
+            showToast(`Yeni anı kaydedildi (${addedBy}) 💖`);
+          }
+        });
+      }
+    });
+
+    // ==============================
+    // REUSABLE PIN & SECRET /admin PANEL
+    // ==============================
+    let pinBuffer = '';
+    let pinSuccessCb = null;
+    let pinCancelCb = null;
+    const pinModal = document.getElementById('pin-modal');
+    const adminModal = document.getElementById('admin-modal');
+    const pinDotsEl = document.getElementById('pin-dots');
+
+    function updatePinDots() {
+      pinDotsEl.querySelectorAll('.pin-dot').forEach((dot, i) => {
+        dot.classList.toggle('filled', i < pinBuffer.length);
+      });
+    }
+
+    function requirePin({ title = 'PIN Doğrulama', subtitle = 'Devam etmek için 4 haneli PIN kodunu girin', onSuccess = null, onCancel = null } = {}) {
+      pinBuffer = '';
+      pinSuccessCb = onSuccess;
+      pinCancelCb = onCancel;
+      document.getElementById('pin-modal-title').textContent = title;
+      document.getElementById('pin-modal-sub').textContent = subtitle;
+      updatePinDots();
+      pinModal.classList.add('open');
+    }
+
+    function closePinModal(cancelled = false) {
+      pinModal.classList.remove('open');
+      pinBuffer = '';
+      updatePinDots();
+      const cancelFn = pinCancelCb;
+      pinSuccessCb = null;
+      pinCancelCb = null;
+      if (cancelled && typeof cancelFn === 'function') cancelFn();
+    }
+
+    function handlePinDigit(d) {
+      if (pinBuffer.length >= 4) return;
+      pinBuffer += d;
+      updatePinDots();
+      playTick();
+      if (pinBuffer.length === 4) {
+        if (pinBuffer === state.pin) {
+          const okFn = pinSuccessCb;
+          setTimeout(() => {
+            closePinModal(false);
+            if (typeof okFn === 'function') okFn();
+          }, 150);
+        } else {
+          pinDotsEl.classList.add('shake');
+          showToast('Hatalı PIN! Tekrar deneyin.');
+          setTimeout(() => {
+            pinDotsEl.classList.remove('shake');
+            pinBuffer = '';
+            updatePinDots();
+          }, 400);
+        }
+      }
+    }
+
+    document.getElementById('pin-cancel').addEventListener('click', () => closePinModal(true));
+    pinModal.addEventListener('click', e => { if (e.target === pinModal) closePinModal(true); });
+
+    document.querySelectorAll('#pin-pad [data-num]').forEach(btn => {
+      btn.addEventListener('click', () => handlePinDigit(btn.dataset.num));
+    });
+    document.getElementById('pin-clear').addEventListener('click', () => { pinBuffer = ''; updatePinDots(); });
+    document.getElementById('pin-back').addEventListener('click', () => { pinBuffer = pinBuffer.slice(0, -1); updatePinDots(); });
+
+    // Keyboard support for PIN modal & Lightbox
+    window.addEventListener('keydown', e => {
+      if (photoLightbox.classList.contains('open')) {
+        if (e.key === 'Escape') closeLightbox();
+        else if (e.key === 'ArrowLeft') lightboxPrev.click();
+        else if (e.key === 'ArrowRight') lightboxNext.click();
+        return;
+      }
+      if (!pinModal.classList.contains('open')) return;
+      if (/^[0-9]$/.test(e.key)) handlePinDigit(e.key);
+      else if (e.key === 'Backspace') { pinBuffer = pinBuffer.slice(0, -1); updatePinDots(); }
+      else if (e.key === 'Escape') closePinModal(true);
+    });
+
+    function clearAdminUrl() {
+      try {
+        const cleanPath = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+        if (cleanPath === '/admin' || window.location.hash.toLowerCase() === '#admin') {
+          window.history.replaceState(null, '', '/');
+        }
+      } catch {}
+    }
+
+    function refreshAllUI() {
+      foodWheel.renderList();
+      foodWheel.draw();
+      activityWheel.renderList();
+      activityWheel.draw();
+      renderCustomCards();
+      renderWatchlist();
+      renderMemories();
+      renderScores();
+      renderAdminAll();
+    }
+
+    function openAdminPanel() {
+      renderAdminAll();
+      adminModal.classList.add('open');
+    }
+
+    function closeAdminPanel() {
+      adminModal.classList.remove('open');
+      clearAdminUrl();
+    }
+
+    function checkSecretAdminRoute() {
+      const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path === '/admin' || hash === '#admin') {
+        requirePin({
+          title: 'Gizli Admin Girişi',
+          subtitle: 'Yönetim paneli için 4 haneli PIN kodunu girin',
+          onSuccess: openAdminPanel,
+          onCancel: clearAdminUrl
+        });
+      }
+    }
+
+    window.addEventListener('hashchange', checkSecretAdminRoute);
+    window.addEventListener('popstate', checkSecretAdminRoute);
+    checkSecretAdminRoute();
+
+    document.getElementById('admin-close-btn').addEventListener('click', closeAdminPanel);
+    adminModal.addEventListener('click', e => { if (e.target === adminModal) closeAdminPanel(); });
+
+    document.querySelectorAll('#admin-tabs .admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#admin-tabs .admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('admin-sec-' + tab.dataset.atab).classList.add('active');
+      });
+    });
+
+    function renderAdminWheelList(key, containerId, infoId) {
+      const container = document.getElementById(containerId);
+      const info = document.getElementById(infoId);
+      const hasCustomDef = Boolean(state.customDefaults && state.customDefaults[key]);
+      info.innerHTML = hasCustomDef
+        ? `<span class="status-pill">✓ Özel Default Kayıtlı (${state.customDefaults[key].length} madde)</span>`
+        : 'Şu an fabrika varsayılanı kullanılıyor.';
+
+      container.innerHTML = '';
+      state[key].forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'admin-edit-row';
+        row.innerHTML = `
+          <input type="checkbox" ${item.active ? 'checked' : ''} title="Çarkta Aktif" style="width:18px;height:18px;cursor:pointer;" />
+          <input type="text" style="flex:1;" />
+          <button type="button" class="tiny-btn del-btn" title="Sil">🗑️</button>
+        `;
+        const inp = row.querySelector('input[type="text"]');
+        inp.value = item.text;
+        inp.addEventListener('input', () => {
+          item.text = inp.value;
+          saveState();
+          if (key === 'foods') { foodWheel.renderList(); foodWheel.draw(); }
+          else { activityWheel.renderList(); activityWheel.draw(); }
+        });
+        row.querySelector('input[type="checkbox"]').addEventListener('change', e => {
+          item.active = e.target.checked;
+          saveState();
+          if (key === 'foods') { foodWheel.renderList(); foodWheel.draw(); }
+          else { activityWheel.renderList(); activityWheel.draw(); }
+        });
+        row.querySelector('.del-btn').addEventListener('click', () => {
+          state[key] = state[key].filter(x => x.id !== item.id);
+          saveState();
+          refreshAllUI();
+        });
+        container.appendChild(row);
+      });
+    }
+
+    function renderAdminCards() {
+      const container = document.getElementById('admin-cards-list');
+      const info = document.getElementById('admin-cards-default-info');
+      const hasCustomDef = Boolean(state.customDefaults && state.customDefaults.cards);
+      info.innerHTML = hasCustomDef
+        ? `<span class="status-pill">✓ Özel Default Deste (${state.customDefaults.cards.length} kart)</span>`
+        : `Toplam ${state.cards.length} kart (Fabrika varsayılanı aktif).`;
+
+      container.innerHTML = '';
+      state.cards.forEach(card => {
+        const row = document.createElement('div');
+        row.className = 'admin-edit-row';
+        row.innerHTML = `
+          <select style="width:120px;">
+            <option value="gorev">🎯 Görev</option>
+            <option value="soru">💬 Soru</option>
+          </select>
+          <input type="text" style="flex:1;" />
+          <button type="button" class="tiny-btn del-btn" title="Sil">🗑️</button>
+        `;
+        const sel = row.querySelector('select');
+        const inp = row.querySelector('input[type="text"]');
+        sel.value = card.cat;
+        inp.value = card.text;
+
+        sel.addEventListener('change', () => {
+          card.cat = sel.value;
+          saveState();
+          renderCustomCards();
+        });
+        inp.addEventListener('input', () => {
+          card.text = inp.value;
+          saveState();
+          renderCustomCards();
+        });
+        row.querySelector('.del-btn').addEventListener('click', () => {
+          state.cards = state.cards.filter(x => x.id !== card.id);
+          saveState();
+          refreshAllUI();
+        });
+        container.appendChild(row);
+      });
+    }
+
+    function renderAdminMovies() {
+      const container = document.getElementById('admin-movies-list');
+      const info = document.getElementById('admin-movies-default-info');
+      const hasCustomDef = Boolean(state.customDefaults && state.customDefaults.movies);
+      info.innerHTML = hasCustomDef
+        ? `<span class="status-pill">✓ Özel Film Defaultu (${state.customDefaults.movies.length} film)</span>`
+        : `Toplam ${state.movies.length} film önerisi.`;
+
+      container.innerHTML = '';
+      state.movies.forEach(mv => {
+        const box = document.createElement('div');
+        box.className = 'admin-movie-card';
+        box.innerHTML = `
+          <div class="admin-movie-top">
+            <input type="text" class="mv-title" placeholder="Film adı" />
+            <select class="mv-genre">
+              <option value="Romantik">Romantik</option>
+              <option value="Komedi">Komedi</option>
+              <option value="Dram">Dram</option>
+              <option value="Gerilim">Gerilim</option>
+              <option value="Aksiyon">Aksiyon</option>
+              <option value="Animasyon">Animasyon</option>
+              <option value="Bilim Kurgu">Bilim Kurgu</option>
+            </select>
+            <input type="number" class="mv-year" placeholder="Yıl" />
+            <button type="button" class="tiny-btn del-btn" title="Sil">🗑️</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" class="mv-desc" placeholder="Açıklama" style="flex:1;" />
+            <label style="display:inline-flex;align-items:center;gap:4px;font-size:0.78rem;font-weight:700;white-space:nowrap;">
+              <input type="checkbox" class="mv-tr" /> 🇹🇷 Türk
+            </label>
+          </div>
+        `;
+        const t = box.querySelector('.mv-title');
+        const g = box.querySelector('.mv-genre');
+        const y = box.querySelector('.mv-year');
+        const d = box.querySelector('.mv-desc');
+        const tr = box.querySelector('.mv-tr');
+        t.value = mv.title;
+        g.value = mv.genre;
+        y.value = mv.year || '';
+        d.value = mv.desc || '';
+        tr.checked = Boolean(mv.isTurkish);
+
+        t.addEventListener('input', () => { mv.title = t.value; saveState(); });
+        g.addEventListener('change', () => { mv.genre = g.value; saveState(); updateMovieBadges(); });
+        y.addEventListener('input', () => { mv.year = Number(y.value) || ''; saveState(); });
+        d.addEventListener('input', () => { mv.desc = d.value; saveState(); });
+        tr.addEventListener('change', () => { mv.isTurkish = tr.checked; saveState(); updateMovieBadges(); });
+        box.querySelector('.del-btn').addEventListener('click', () => {
+          state.movies = state.movies.filter(x => x.id !== mv.id);
+          saveState();
+          renderAdminMovies();
+          updateMovieBadges();
+        });
+        container.appendChild(box);
+      });
+    }
+
+    function renderAdminAll() {
+      renderAdminWheelList('foods', 'admin-foods-list', 'admin-foods-default-info');
+      renderAdminWheelList('activities', 'admin-activities-list', 'admin-activities-default-info');
+      renderAdminCards();
+      renderAdminMovies();
+    }
+
+    // Admin Add Forms
+    document.getElementById('admin-add-food-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const val = document.getElementById('admin-add-food-input').value.trim();
+      if (!val) return;
+      state.foods.unshift({ id: 'f_' + Date.now(), text: val, active: true });
+      document.getElementById('admin-add-food-input').value = '';
+      saveState();
+      refreshAllUI();
+      showToast('Yemek eklendi 🍕');
+    });
+
+    document.getElementById('admin-add-activity-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const val = document.getElementById('admin-add-activity-input').value.trim();
+      if (!val) return;
+      state.activities.unshift({ id: 'a_' + Date.now(), text: val, active: true });
+      document.getElementById('admin-add-activity-input').value = '';
+      saveState();
+      refreshAllUI();
+      showToast('Aktivite eklendi 🎡');
+    });
+
+    document.getElementById('admin-add-card-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const cat = document.getElementById('admin-add-card-cat').value;
+      const text = document.getElementById('admin-add-card-input').value.trim();
+      if (!text) return;
+      state.cards.unshift({ id: 'c_' + Date.now(), cat, text, custom: false });
+      document.getElementById('admin-add-card-input').value = '';
+      saveState();
+      refreshAllUI();
+      showToast('Kart eklendi 🃏');
+    });
+
+    document.getElementById('admin-add-movie-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('admin-movie-title').value.trim();
+      if (!title) return;
+      state.movies.unshift({
+        id: 'mv_' + Date.now(),
+        title,
+        genre: document.getElementById('admin-movie-genre').value,
+        year: Number(document.getElementById('admin-movie-year').value) || 2024,
+        isTurkish: document.getElementById('admin-movie-tr').checked,
+        desc: document.getElementById('admin-movie-desc').value.trim()
+      });
+      document.getElementById('admin-movie-title').value = '';
+      document.getElementById('admin-movie-desc').value = '';
+      document.getElementById('admin-movie-tr').checked = false;
+      saveState();
+      renderAdminMovies();
+      updateMovieBadges();
+      showToast('Film önerisi eklendi 🎬');
+    });
+
+    // Save As Default Buttons
+    function saveSectionAsDefault(key, label) {
+      state.customDefaults[key] = clone(state[key]);
+      saveState();
+      renderAdminAll();
+      showToast(`${label} yeni default olarak kaydedildi 📌`);
+    }
+
+    document.getElementById('admin-save-def-foods').addEventListener('click', () => saveSectionAsDefault('foods', 'Yemekler'));
+    document.getElementById('admin-save-def-activities').addEventListener('click', () => saveSectionAsDefault('activities', 'Aktiviteler'));
+    document.getElementById('admin-save-def-cards').addEventListener('click', () => saveSectionAsDefault('cards', 'Kart destesi'));
+    document.getElementById('admin-save-def-movies').addEventListener('click', () => saveSectionAsDefault('movies', 'Film havuzu'));
+
+    // Factory Reset Per Section
+    document.getElementById('admin-factory-foods').addEventListener('click', () => {
+      state.customDefaults.foods = null;
+      state.foods = clone(FACTORY_FOODS);
+      saveState(); refreshAllUI(); showToast('Yemekler fabrika ayarına döndü');
+    });
+    document.getElementById('admin-factory-activities').addEventListener('click', () => {
+      state.customDefaults.activities = null;
+      state.activities = clone(FACTORY_ACTIVITIES);
+      saveState(); refreshAllUI(); showToast('Aktiviteler fabrika ayarına döndü');
+    });
+    document.getElementById('admin-factory-cards').addEventListener('click', () => {
+      state.customDefaults.cards = null;
+      state.cards = clone(FACTORY_CARDS);
+      saveState(); refreshAllUI(); showToast('Kartlar fabrika ayarına döndü');
+    });
+    document.getElementById('admin-factory-movies').addEventListener('click', () => {
+      state.customDefaults.movies = null;
+      state.movies = clone(FACTORY_MOVIES);
+      saveState(); refreshAllUI(); showToast('Filmler fabrika ayarına döndü');
+    });
+
+    // Master Default & Factory All
+    document.getElementById('admin-save-all-defaults').addEventListener('click', () => {
+      state.customDefaults = {
+        foods: clone(state.foods),
+        activities: clone(state.activities),
+        cards: clone(state.cards),
+        movies: clone(state.movies)
+      };
+      saveState();
+      renderAdminAll();
+      showToast('Tüm listeler yeni default olarak sabitlendi 📌');
+    });
+
+    document.getElementById('admin-factory-all').addEventListener('click', () => {
+      if (!confirm('Tüm listeler ve özel defaultlar fabrika ayarına dönsün mü? (Anılarınız silinmez)')) return;
+      state.customDefaults = { foods: null, activities: null, cards: null, movies: null };
+      state.foods = clone(FACTORY_FOODS);
+      state.activities = clone(FACTORY_ACTIVITIES);
+      state.cards = clone(FACTORY_CARDS);
+      state.movies = clone(FACTORY_MOVIES);
+      saveState();
+      refreshAllUI();
+      showToast('Fabrika ayarlarına dönüldü');
+    });
+
+    // Change PIN
+    document.getElementById('admin-pin-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const val = document.getElementById('admin-new-pin').value.trim();
+      if (!/^\d{4}$/.test(val)) {
+        showToast('PIN tam 4 rakam olmalı!');
+        return;
+      }
+      state.pin = val;
+      saveState();
+      document.getElementById('admin-new-pin').value = '';
+      showToast('Admin PIN başarıyla güncellendi 🔑');
+    });
+
+    // Export / Import JSON
+    document.getElementById('admin-export-btn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `havva-berat-yedek-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Yedek dosyası indirildi 💾');
+    });
+
+    document.getElementById('admin-import-file').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!imported || !Array.isArray(imported.foods)) throw new Error('Geçersiz dosya');
+          state = {
+            ...state,
+            ...imported,
+            customDefaults: imported.customDefaults || state.customDefaults
+          };
+          saveState();
+          refreshAllUI();
+          showToast('Yedek başarıyla yüklendi ✨');
+        } catch {
+          showToast('Geçersiz yedek dosyası!');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // ==============================
+    // START REALTIME CLOUD LISTENER
+    // ==============================
+    if (stateDocRef) {
+      onSnapshot(
+        stateDocRef,
+        async (snap) => {
+          if (snap.exists()) {
+            const remote = snap.data();
+            const isOwnEcho = remote.updatedAt && remote.updatedAt === lastLocalWriteAt;
+            cloudReady = true;
+            setSyncBadge('🟢', 'Canlı');
+
+            if (!isOwnEcho) {
+              const remoteMovies = Array.isArray(remote.movies) ? remote.movies : state.movies;
+              const isOldTinyMovieList =
+                remoteMovies.length <= 15 &&
+                !remoteMovies.some(m => typeof m.isTurkish === 'boolean') &&
+                !(remote.customDefaults && remote.customDefaults.movies);
+
+              const legacyMemories = Array.isArray(remote.memories) ? remote.memories : [];
+
+              state = {
+                ...state,
+                pin: typeof remote.pin === 'string' && /^\d{4}$/.test(remote.pin) ? remote.pin : state.pin,
+                foods: Array.isArray(remote.foods) ? remote.foods : state.foods,
+                activities: Array.isArray(remote.activities) ? remote.activities : state.activities,
+                scores: remote.scores || state.scores,
+                cards: Array.isArray(remote.cards) ? remote.cards : state.cards,
+                movies: isOldTinyMovieList ? clone(FACTORY_MOVIES) : remoteMovies,
+                watchlist: Array.isArray(remote.watchlist) ? remote.watchlist : state.watchlist,
+                customDefaults: remote.customDefaults || state.customDefaults
+              };
+
+              // Auto-migrate any legacy memories from app_state/havva_berat to /memories/{id}
+              if (legacyMemories.length > 0 && db) {
+                (async () => {
+                  try {
+                    for (const lm of legacyMemories) {
+                      const clean = sanitizeMemoryForCloud(lm);
+                      await setDoc(doc(db, 'memories', clean.id), clean);
+                    }
+                    // Clear legacy array from app_state doc to free up space
+                    saveState(false);
+                  } catch (e) {
+                    console.warn('Eski anılar taşınırken hata:', e);
+                  }
+                })();
+              } else {
+                saveState(!isOldTinyMovieList);
+              }
+
+              const activeEl = document.activeElement;
+              const typingInAdmin = adminModal.classList.contains('open') && activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
+              if (!typingInAdmin) {
+                refreshAllUI();
+              } else {
+                foodWheel.renderList();
+                foodWheel.draw();
+                activityWheel.renderList();
+                activityWheel.draw();
+                renderCustomCards();
+                renderWatchlist();
+                renderMemories();
+                renderScores();
+              }
+            }
+          } else {
+            // Very first load: seed Firestore with initial state
+            try {
+              const ts = Date.now();
+              lastLocalWriteAt = ts;
+              await setDoc(stateDocRef, buildCloudPayload(ts));
+              cloudReady = true;
+              setSyncBadge('🟢', 'Canlı');
+            } catch (err) {
+              console.warn('İlk veri buluta yazılamadı:', err);
+              setSyncBadge('🔴', 'Çevrimdışı');
+            }
+          }
+        },
+        (err) => {
+          console.warn('Canlı senkronizasyon hatası:', err);
+          setSyncBadge('🔴', 'Çevrimdışı');
+        }
+      );
+    }
+
+    // Dedicated realtime listener for /memories collection (1 MB per memory!)
+    if (memoriesColRef) {
+      onSnapshot(
+        memoriesColRef,
+        (qs) => {
+          const list = [];
+          qs.forEach(d => {
+            const data = d.data();
+            if (data) list.push({ ...data, id: data.id || d.id });
+          });
+          state.memories = list;
+          renderMemories();
+        },
+        (err) => {
+          console.warn('Anılar dinlenemedi:', err);
+        }
+      );
+    }
+  </script>
+</body>
+</html>
