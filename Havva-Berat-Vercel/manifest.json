@@ -4,8 +4,8 @@
   "description": "Havva & Berat için yemek çarkı, plan çarkı, film seçici, kartlar ve anı defteri.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff7f4",
-  "theme_color": "#ff5678",
+  "background_color": "#0e0609",
+  "theme_color": "#7a102c",
   "orientation": "portrait",
   "icons": [
     {

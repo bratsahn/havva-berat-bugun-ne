@@ -8,12 +8,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bugün Ne?" />
-  <meta name="theme-color" content="#ff5678" />
+  <meta name="theme-color" content="#14080d" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #fff7f4;
@@ -1566,6 +1566,448 @@
         max-height: 72vw;
       }
     }
+
+    /* ============================================================
+       PREMIUM DARK VELVET BURGUNDY & CHAMPAGNE GOLD EDITION
+       ============================================================ */
+    :root {
+      --bg: #0d0609;
+      --bg-accent: #241018;
+      --card: rgba(25, 13, 19, 0.86);
+      --card-solid: #1a0d13;
+      --ink: #fcf2f5;
+      --muted: #b898a3;
+      --border: rgba(235, 188, 200, 0.13);
+      --rose: #be123c;
+      --rose-dark: #f43f5e;
+      --violet: #e2b874;
+      --gold: #e2b874;
+      --amber: #f59e0b;
+      --mint: #10b981;
+      --sky: #60a5fa;
+      --danger: #f87171;
+      --shadow-sm: 0 10px 26px rgba(0, 0, 0, 0.42);
+      --shadow-md: 0 22px 54px rgba(0, 0, 0, 0.58);
+    }
+
+    body {
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 6%, rgba(159, 18, 57, 0.36), transparent 40%),
+        radial-gradient(circle at 88% 12%, rgba(136, 19, 55, 0.28), transparent 42%),
+        radial-gradient(circle at 50% 94%, rgba(226, 184, 116, 0.12), transparent 44%),
+        #0d0609;
+    }
+
+    h1, h2, .brand-title {
+      font-family: 'Playfair Display', 'Fredoka', serif;
+      letter-spacing: 0.01em;
+    }
+
+    .topbar {
+      background: rgba(14, 6, 10, 0.82);
+      border-bottom: 1px solid rgba(226, 184, 116, 0.16);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-badge {
+      border: 1.5px solid rgba(226, 184, 116, 0.45);
+      box-shadow: 0 8px 24px rgba(190, 18, 60, 0.45);
+    }
+
+    .brand-title {
+      background: linear-gradient(135deg, #fff5f7 20%, #f3d4a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .icon-btn {
+      background: rgba(34, 17, 25, 0.9);
+      color: var(--ink);
+      border-color: rgba(226, 184, 116, 0.2);
+    }
+
+    .icon-btn:hover {
+      background: rgba(54, 24, 37, 0.95);
+      border-color: rgba(226, 184, 116, 0.4);
+    }
+
+    .nav-pills {
+      background: rgba(24, 12, 18, 0.86);
+      border: 1px solid rgba(226, 184, 116, 0.16);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    }
+
+    .nav-pill {
+      color: var(--muted);
+    }
+
+    .nav-pill:hover {
+      color: #fff;
+      background: rgba(190, 18, 60, 0.18);
+    }
+
+    .nav-pill.active {
+      background: linear-gradient(135deg, #881337, #be123c, #e11d48);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(190, 18, 60, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .card {
+      background: linear-gradient(165deg, rgba(31, 15, 22, 0.9), rgba(18, 9, 13, 0.92));
+      border: 1px solid rgba(226, 184, 116, 0.16);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 228, 234, 0.06);
+    }
+
+    .badge-soft {
+      background: rgba(226, 184, 116, 0.14);
+      color: #f3d4a0;
+      border: 1px solid rgba(226, 184, 116, 0.25);
+    }
+
+    /* Wheel Luxury Bezel */
+    .wheel-canvas-wrap {
+      background: linear-gradient(145deg, #3c1020, #16080e);
+      box-shadow:
+        0 24px 56px rgba(0, 0, 0, 0.65),
+        0 0 0 2px rgba(226, 184, 116, 0.38),
+        inset 0 0 24px rgba(226, 184, 116, 0.14);
+    }
+
+    .wheel-center-btn {
+      background: linear-gradient(135deg, #881337, #be123c);
+      border: 3px solid #e2b874;
+      color: #fff8eb;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(226, 184, 116, 0.28);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #881337, #be123c, #e11d48);
+      color: #fff;
+      border: 1px solid rgba(244, 188, 200, 0.22);
+      box-shadow: 0 10px 28px rgba(190, 18, 60, 0.42);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 14px 34px rgba(225, 29, 72, 0.55);
+    }
+
+    .btn-secondary {
+      background: rgba(226, 184, 116, 0.15);
+      color: #f3d4a0;
+      border: 1px solid rgba(226, 184, 116, 0.28);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(226, 184, 116, 0.24);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    /* Inputs & Lists */
+    .input, .select, .textarea {
+      background: #140a0f;
+      color: var(--ink);
+      border: 1.5px solid rgba(235, 188, 200, 0.16);
+    }
+
+    .input::placeholder, .textarea::placeholder {
+      color: rgba(184, 152, 163, 0.65);
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: #e2b874;
+      box-shadow: 0 0 0 4px rgba(226, 184, 116, 0.14);
+    }
+
+    .select option {
+      background: #1a0d13;
+      color: var(--ink);
+    }
+
+    .item-row {
+      background: rgba(22, 11, 16, 0.92);
+      border: 1px solid rgba(235, 188, 200, 0.12);
+    }
+
+    .item-row.inactive {
+      opacity: 0.45;
+      background: rgba(18, 9, 13, 0.55);
+    }
+
+    .tiny-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink);
+    }
+
+    .tiny-btn:hover {
+      background: rgba(190, 18, 60, 0.35);
+      color: #fff;
+    }
+
+    /* Chips & Pickers */
+    .chip {
+      background: rgba(26, 13, 19, 0.92);
+      color: var(--muted);
+      border: 1px solid rgba(235, 188, 200, 0.15);
+    }
+
+    .chip.active, .chip:hover {
+      background: linear-gradient(135deg, #881337, #be123c);
+      color: #fff;
+      border-color: rgba(226, 184, 116, 0.45);
+    }
+
+    .who-picker {
+      background: rgba(14, 7, 10, 0.85);
+      border: 1px solid rgba(235, 188, 200, 0.16);
+    }
+
+    .who-opt.active.havva {
+      background: linear-gradient(135deg, #881337, #be123c);
+      box-shadow: 0 4px 14px rgba(190, 18, 60, 0.45);
+    }
+
+    .who-badge.havva {
+      background: rgba(190, 18, 60, 0.24);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .who-badge.berat {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    /* Coin & Scoreboard */
+    .coin-face {
+      border: 4px solid #e2b874;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6), 0 0 24px rgba(226, 184, 116, 0.2);
+    }
+
+    .coin-front {
+      background: linear-gradient(135deg, #6b0f29, #9f1239, #be123c);
+    }
+
+    .coin-back {
+      background: linear-gradient(135deg, #172554, #1e3a8a, #2563eb);
+    }
+
+    .decider-result {
+      background: rgba(159, 18, 57, 0.16);
+      border: 1px dashed rgba(226, 184, 116, 0.38);
+      color: #fff3f6;
+    }
+
+    .score-box {
+      background: rgba(20, 10, 15, 0.9);
+      border: 1px solid rgba(226, 184, 116, 0.18);
+    }
+
+    .score-box.havva .score-num { color: #fb7185; }
+    .score-box.berat .score-num { color: #60a5fa; }
+
+    /* Couple Cards */
+    .play-card-back {
+      background: linear-gradient(135deg, #4c0519, #881337, #3b0724);
+      border: 3px solid rgba(226, 184, 116, 0.65);
+      box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65);
+    }
+
+    .play-card-front {
+      background: linear-gradient(160deg, #24111a, #170a10);
+      color: var(--ink);
+      border: 2px solid rgba(226, 184, 116, 0.38);
+      box-shadow: 0 24px 52px rgba(0, 0, 0, 0.65);
+    }
+
+    .card-tag.gorev {
+      background: rgba(226, 184, 116, 0.18);
+      color: #f3d4a0;
+    }
+
+    .card-tag.soru {
+      background: rgba(190, 18, 60, 0.28);
+      color: #fda4af;
+    }
+
+    /* Movies Spotlight */
+    .movie-spotlight {
+      background: linear-gradient(135deg, #2b0b17, #4c0f24, #1a0912);
+      border: 1px solid rgba(226, 184, 116, 0.28);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .movie-meta {
+      background: rgba(226, 184, 116, 0.18);
+      color: #f3d4a0;
+    }
+
+    /* Watchlist TR checkbox label */
+    #watchlist-add-form label {
+      background: #140a0f !important;
+      border-color: rgba(235, 188, 200, 0.16) !important;
+      color: var(--ink);
+    }
+
+    /* Memories Dark Instagram Feed */
+    .mobile-composer-bar {
+      background: linear-gradient(135deg, rgba(31, 15, 22, 0.94), rgba(20, 10, 15, 0.96));
+      border: 1px solid rgba(226, 184, 116, 0.22);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .mobile-composer-left { color: var(--ink); }
+
+    .timeline-day { color: #f3d4a0; }
+
+    .timeline-rail::before {
+      background: linear-gradient(180deg, #e2b874, #be123c);
+      opacity: 0.5;
+    }
+
+    .timeline-dot {
+      background: linear-gradient(135deg, #e2b874, #be123c);
+      border-color: #14090e;
+      box-shadow: 0 0 0 3px rgba(226, 184, 116, 0.25);
+    }
+
+    .memory-item {
+      background: linear-gradient(165deg, #1d0f15, #14090e);
+      border: 1px solid rgba(226, 184, 116, 0.18);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .memory-emoji-mini {
+      background: #24111a;
+      border: 1px solid rgba(226, 184, 116, 0.35);
+    }
+
+    .ig-dot { background: rgba(255, 255, 255, 0.25); }
+    .ig-dot.active { background: #e2b874; }
+
+    .photo-upload-label {
+      border-color: rgba(226, 184, 116, 0.42);
+      background: rgba(159, 18, 57, 0.14);
+      color: #f3d4a0;
+    }
+
+    .photo-upload-label:hover {
+      background: rgba(159, 18, 57, 0.24);
+    }
+
+    .emoji-opt {
+      background: #140a0f;
+      border-color: rgba(235, 188, 200, 0.16);
+    }
+
+    .emoji-opt.active {
+      border-color: #e2b874;
+      background: rgba(190, 18, 60, 0.28);
+    }
+
+    .empty-state {
+      background: rgba(22, 11, 16, 0.72);
+      border-color: rgba(226, 184, 116, 0.2);
+    }
+
+    /* Modals, PIN & Admin */
+    .modal-backdrop {
+      background: rgba(6, 2, 4, 0.76);
+    }
+
+    .modal-card {
+      background: linear-gradient(165deg, #211018, #14090e);
+      color: var(--ink);
+      border: 1px solid rgba(226, 184, 116, 0.26);
+      box-shadow: 0 32px 72px rgba(0, 0, 0, 0.75);
+    }
+
+    .modal-label { color: #e2b874; }
+
+    .pin-dot { border-color: rgba(226, 184, 116, 0.38); }
+    .pin-dot.filled {
+      background: #e11d48;
+      border-color: #e2b874;
+      box-shadow: 0 0 12px rgba(225, 29, 72, 0.6);
+    }
+
+    .pin-key {
+      background: #23111a;
+      color: var(--ink);
+      border-color: rgba(226, 184, 116, 0.18);
+    }
+
+    .pin-key:hover {
+      background: #3b1727;
+      border-color: rgba(226, 184, 116, 0.4);
+    }
+
+    .admin-modal-card {
+      background: #13090e;
+      color: var(--ink);
+      border: 1px solid rgba(226, 184, 116, 0.28);
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #4c0519, #881337);
+      border-bottom: 1px solid rgba(226, 184, 116, 0.25);
+    }
+
+    .admin-tabs {
+      background: #1a0c12;
+      border-bottom: 1px solid rgba(226, 184, 116, 0.14);
+    }
+
+    .admin-tab { color: var(--muted); }
+    .admin-tab.active {
+      background: linear-gradient(135deg, #881337, #be123c);
+      color: #fff;
+    }
+
+    .admin-toolbar, .admin-edit-row, .admin-movie-card {
+      background: #1d0e15 !important;
+      border-color: rgba(226, 184, 116, 0.16) !important;
+    }
+
+    .admin-edit-row input[type="text"],
+    .admin-edit-row input[type="number"],
+    .admin-edit-row select,
+    .admin-movie-card input,
+    .admin-movie-card select {
+      background: #12080d;
+      color: var(--ink);
+      border-color: rgba(235, 188, 200, 0.16);
+    }
+
+    .toast {
+      background: linear-gradient(135deg, #4c0519, #881337);
+      color: #fff8eb;
+      border: 1px solid rgba(226, 184, 116, 0.4);
+    }
+
+    /* Mobile Bottom Nav */
+    .mobile-nav {
+      background: rgba(16, 7, 11, 0.94);
+      border-top: 1px solid rgba(226, 184, 116, 0.18);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .mobile-nav button { color: var(--muted); }
+    .mobile-nav button.active {
+      color: #f3d4a0;
+      background: rgba(190, 18, 60, 0.24);
+    }
   </style>
 </head>
 <body>
@@ -1622,7 +2064,7 @@
 
           <div class="wheel-stage">
             <svg class="wheel-pointer" id="food-pointer" width="38" height="42" viewBox="0 0 38 42">
-              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#ff5678" stroke="#ffffff" stroke-width="3" />
+              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#e2b874" stroke="#2b0a14" stroke-width="3" />
             </svg>
             <div class="wheel-canvas-wrap">
               <canvas id="food-canvas" width="500" height="500"></canvas>
@@ -1680,7 +2122,7 @@
 
           <div class="wheel-stage">
             <svg class="wheel-pointer" id="activity-pointer" width="38" height="42" viewBox="0 0 38 42">
-              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#7c5cff" stroke="#ffffff" stroke-width="3" />
+              <path d="M19 40L3 12C1 8 4 2 9 2H29C34 2 37 8 35 12L19 40Z" fill="#e2b874" stroke="#2b0a14" stroke-width="3" />
             </svg>
             <div class="wheel-canvas-wrap">
               <canvas id="activity-canvas" width="500" height="500"></canvas>
@@ -2465,9 +2907,9 @@
     ];
 
     const WHEEL_PALETTE = [
-      '#FF5678', '#7C5CFF', '#FF8E53', '#10B981',
-      '#F59E0B', '#EC4899', '#3B82F6', '#14B8A6',
-      '#F43F5E', '#8B5CF6', '#FB7185', '#06B6D4'
+      '#881337', '#B91C1C', '#6B1D45', '#BE123C',
+      '#4C1D3D', '#9F1239', '#7F1D1D', '#831843',
+      '#581C87', '#A16207', '#9D174D', '#701A75'
     ];
 
     function clone(obj) {
@@ -2748,7 +3190,7 @@
     resizeConfetti();
 
     function fireConfetti() {
-      const colors = ['#ff5678', '#7c5cff', '#f59e0b', '#10b981', '#3b82f6', '#ec4899'];
+      const colors = ['#be123c', '#e2b874', '#f43f5e', '#fde68a', '#fdf4f6', '#881337'];
       for (let i = 0; i < 110; i++) {
         confettiParticles.push({
           x: window.innerWidth / 2 + (Math.random() - 0.5) * 160,
