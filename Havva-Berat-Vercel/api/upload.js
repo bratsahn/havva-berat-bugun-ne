@@ -26,13 +26,20 @@ async function readRawBody(req, maxBytes = 4.4 * 1024 * 1024) {
   return Buffer.concat(chunks);
 }
 
+function getBlobToken() {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
+  const key = Object.keys(process.env).find(k => k.endsWith('_READ_WRITE_TOKEN') && process.env[k]);
+  return key ? process.env[key] : '';
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  const token = getBlobToken();
+  if (!token) {
     return res.status(500).json({
       ok: false,
-      error: 'Vercel Blob bağlı değil! Vercel Panel → Storage → Blob oluşturup projeye bağlayın.'
+      error: 'Vercel Blob token bulunamadı! Vercel → Proje → Settings → Environment Variables altında BLOB_READ_WRITE_TOKEN olmalı.'
     });
   }
 
@@ -50,7 +57,7 @@ export default async function handler(req, res) {
         ? body.urls.filter(u => typeof u === 'string' && u.includes('blob.vercel-storage.com'))
         : [];
       if (urls.length > 0) {
-        await del(urls);
+        await del(urls, { token });
       }
       return res.status(200).json({ ok: true, deleted: urls.length });
     } catch (err) {
@@ -82,7 +89,8 @@ export default async function handler(req, res) {
 
     const blob = await put(pathname, buffer, {
       access: 'public',
-      contentType
+      contentType,
+      token
     });
 
     return res.status(200).json({
