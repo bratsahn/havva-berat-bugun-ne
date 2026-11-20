@@ -1,0 +1,18 @@
+{
+  "name": "Havva & Berat — Bugün Ne?",
+  "short_name": "Bugün Ne?",
+  "description": "Havva & Berat için yemek çarkı, plan çarkı, film seçici, kartlar ve anı defteri.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff7f4",
+  "theme_color": "#ff5678",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
