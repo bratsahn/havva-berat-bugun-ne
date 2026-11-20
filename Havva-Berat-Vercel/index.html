@@ -1446,6 +1446,81 @@
       background: rgba(255, 86, 120, 0.13);
       color: var(--rose-dark);
     }
+    .who-opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .avatar-mini {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: inline-block;
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+    }
+    .who-badge .avatar-mini {
+      width: 16px;
+      height: 16px;
+    }
+    .coin-avatar {
+      width: 98px;
+      height: 98px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+      margin-bottom: 5px;
+      display: block;
+    }
+    .score-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+    .avatar-score {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(37, 25, 46, 0.15);
+    }
+    .memory-avatar-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+    .memory-avatar-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 86, 120, 0.35);
+      display: block;
+    }
+    .memory-avatar-img.berat {
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .memory-emoji-mini {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+    }
 
     @media (max-width: 860px) {
       .wheel-layout, .decider-grid, .deck-wrap, .movie-grid, .memory-grid {
@@ -1571,8 +1646,8 @@
           <div class="who-row">
             <span class="who-label">Kim ekliyor?</span>
             <div class="who-picker" data-who-picker="food">
-              <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
-              <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+              <button type="button" class="who-opt active berat" data-who="Berat"><img src="/berat-avatar.png" alt="Berat" class="avatar-mini" /> Berat</button>
+              <button type="button" class="who-opt havva" data-who="Havva"><img src="/havva-avatar.png" alt="Havva" class="avatar-mini" /> Havva</button>
             </div>
           </div>
 
@@ -1629,8 +1704,8 @@
           <div class="who-row">
             <span class="who-label">Kim ekliyor?</span>
             <div class="who-picker" data-who-picker="activity">
-              <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
-              <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+              <button type="button" class="who-opt active berat" data-who="Berat"><img src="/berat-avatar.png" alt="Berat" class="avatar-mini" /> Berat</button>
+              <button type="button" class="who-opt havva" data-who="Havva"><img src="/havva-avatar.png" alt="Havva" class="avatar-mini" /> Havva</button>
             </div>
           </div>
 
@@ -1664,11 +1739,11 @@
             <div class="coin-scene">
               <div class="coin" id="coin">
                 <div class="coin-face coin-front">
-                  <div class="coin-emoji">💖</div>
+                  <img src="/havva-avatar.png" alt="Havva" class="coin-avatar" />
                   <div class="coin-name">Havva</div>
                 </div>
                 <div class="coin-face coin-back">
-                  <div class="coin-emoji">💙</div>
+                  <img src="/berat-avatar.png" alt="Berat" class="coin-avatar" />
                   <div class="coin-name">Berat</div>
                 </div>
               </div>
@@ -1704,11 +1779,11 @@
 
           <div class="scoreboard">
             <div class="score-box havva">
-              <div style="font-weight: 700; font-size: 0.88rem;">💖 Havva</div>
+              <div class="score-title-row"><img src="/havva-avatar.png" alt="Havva" class="avatar-score" /><span>Havva</span></div>
               <div class="score-num" id="score-havva">0</div>
             </div>
             <div class="score-box berat">
-              <div style="font-weight: 700; font-size: 0.88rem;">💙 Berat</div>
+              <div class="score-title-row"><img src="/berat-avatar.png" alt="Berat" class="avatar-score" /><span>Berat</span></div>
               <div class="score-num" id="score-berat">0</div>
             </div>
           </div>
@@ -1769,8 +1844,8 @@
             <div class="who-row" style="margin-bottom:0;">
               <span class="who-label">Kim ekliyor?</span>
               <div class="who-picker" data-who-picker="card">
-                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
-                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+                <button type="button" class="who-opt active berat" data-who="Berat"><img src="/berat-avatar.png" alt="Berat" class="avatar-mini" /> Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva"><img src="/havva-avatar.png" alt="Havva" class="avatar-mini" /> Havva</button>
               </div>
             </div>
             <select class="select" id="card-cat-select">
@@ -1844,8 +1919,8 @@
             <div class="who-row" style="margin-bottom:0;">
               <span class="who-label">Kim ekliyor?</span>
               <div class="who-picker" data-who-picker="watchlist">
-                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
-                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+                <button type="button" class="who-opt active berat" data-who="Berat"><img src="/berat-avatar.png" alt="Berat" class="avatar-mini" /> Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva"><img src="/havva-avatar.png" alt="Havva" class="avatar-mini" /> Havva</button>
               </div>
             </div>
             <input class="input" id="watchlist-input" type="text" placeholder="Film veya dizi adı..." maxlength="60" required />
@@ -1903,8 +1978,8 @@
             <div class="who-row" style="margin-bottom:0;">
               <span class="who-label">Kim ekliyor?</span>
               <div class="who-picker" data-who-picker="memory">
-                <button type="button" class="who-opt active berat" data-who="Berat">💙 Berat</button>
-                <button type="button" class="who-opt havva" data-who="Havva">💖 Havva</button>
+                <button type="button" class="who-opt active berat" data-who="Berat"><img src="/berat-avatar.png" alt="Berat" class="avatar-mini" /> Berat</button>
+                <button type="button" class="who-opt havva" data-who="Havva"><img src="/havva-avatar.png" alt="Havva" class="avatar-mini" /> Havva</button>
               </div>
             </div>
             <div>
@@ -2461,7 +2536,8 @@
 
     function whoBadgeHtml(who) {
       const isHavva = who === 'Havva';
-      return `<span class="who-badge ${isHavva ? 'havva' : 'berat'}">${isHavva ? '💖 Havva' : '💙 Berat'}</span>`;
+      const src = isHavva ? '/havva-avatar.png' : '/berat-avatar.png';
+      return `<span class="who-badge ${isHavva ? 'havva' : 'berat'}"><img src="${src}" alt="${isHavva ? 'Havva' : 'Berat'}" class="avatar-mini" />${isHavva ? 'Havva' : 'Berat'}</span>`;
     }
 
     function setPickerWho(pickerName, person) {
@@ -3772,7 +3848,10 @@
           <article class="memory-item">
             <div class="memory-post-header">
               <div class="memory-post-author">
-                <div class="memory-emoji">${mem.emoji || '💖'}</div>
+                <div class="memory-avatar-wrap">
+                  <img src="${mem.addedBy === 'Havva' ? '/havva-avatar.png' : '/berat-avatar.png'}" alt="${mem.addedBy === 'Havva' ? 'Havva' : 'Berat'}" class="memory-avatar-img ${mem.addedBy === 'Havva' ? 'havva' : 'berat'}" />
+                  <span class="memory-emoji-mini">${mem.emoji || '💖'}</span>
+                </div>
                 <div>
                   <div class="memory-author-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
                     <span>${mem.addedBy === 'Havva' ? 'Havva' : 'Berat'}</span>
